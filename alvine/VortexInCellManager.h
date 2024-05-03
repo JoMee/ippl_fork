@@ -18,10 +18,6 @@
 #include "Random/Randu.h"
 #include "VortexDistributions.h"
 
-using view_type     = typename ippl::detail::ViewType<ippl::Vector<double, Dim>, 1>::view_type;
-using host_type     = typename ippl::ParticleAttrib<T>::HostMirror;
-using GeneratorPool = typename Kokkos::Random_XorShift64_Pool<>;
-
 template <typename T, unsigned Dim, typename ParticleDistribution, typename VortexDistribution>
 class VortexInCellManager : public AlvineManager<T, Dim> {
 public:
@@ -34,7 +30,7 @@ public:
         Vector_t<double, Dim> rmin_ = 0.0,
         Vector_t<double, Dim> rmax_ = 10.0,
         Vector_t<double, Dim> origin_ = 0.0,
-        bool remove_particles = true)
+        bool remove_particles = false)
         : AlvineManager<T, Dim>(nt_, nr_, solver_, lbt_) {
             this->rmin_m = rmin_;
             this->rmax_m = rmax_;
@@ -95,8 +91,17 @@ public:
 
       //this->setLoadBalancer( std::make_shared<LoadBalancer_t>( this->lbt_m, this->fcontainer_m, this->pcontainer_m, this->fsolver_m) );
 
-      size_type removed = initializeParticles();
-      this->np_m -= removed;
+      ParticleDistribution particle_dist(this->rmin_m, this->rmax_m, this->np_m);
+      VortexDistribution vortex_dist(this->rmin_m, this->rmax_m, this->origin_m);
+
+
+      this->pcontainer_m->initializeParticles(particle_dist, vortex_dist);
+      std::cout << "Particles initialized" << std::endl;
+
+      // if (this->remove_particles) {
+      //     int removed = pc->removeInvalidParticles();
+      //     this->np_m -= removed;
+      // }
 
       this->par2grid();
 
@@ -112,7 +117,6 @@ public:
       pc->update();
     }
 
-
     void set_number_of_particles(int density) {
         int particles = 1;
         for (unsigned i = 0; i < Dim; i++) {
@@ -121,57 +125,6 @@ public:
         this->np_m = particles*density;
         std::cout << "Number of particles: " << this->np_m << std::endl;
     }
-
-    int initializeParticles() {
-
-      std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
-
-        // Create np_m particles in container
-        size_type totalP = this->np_m;
-        pc->create(totalP);  // TODO: local number of particles? from kokkos?
-
-        // Assign positions
-        view_type* R = &(pc->R.getView());  // Position vector
-        ParticleDistribution particle_distribution(*R, this->rmin_m, this->rmax_m, this->np_m);
-        Kokkos::parallel_for(totalP, particle_distribution);
-
-        // Assign vorticity
-        host_type omega_host = pc->omega.getHostMirror();  // Vorticity values
-        VortexDistribution vortex_dist(*R, omega_host, this->rmin_m, this->rmax_m, this->origin_m);
-        Kokkos::parallel_for(totalP, vortex_dist);
-        Kokkos::deep_copy(pc->omega.getView(), omega_host);
-
-        int total_invalid = 0;
-        if (this->remove_particles) {
-            
-            Kokkos::parallel_for(
-                "Mark vorticity null as invalid", totalP, KOKKOS_LAMBDA(const size_t i) {
-                    pc->invalid.getView()(i) = false;
-                    if (pc->omega.getView()(i) == 0) {
-                        pc->invalid.getView()(i) = true;
-                    }
-                });
-
-
-            for (unsigned i = 0; i < totalP; i++) {
-                pc->invalid.getView()(i) ? total_invalid++: total_invalid;
-            }
-            
-            if (total_invalid and (total_invalid < int(totalP))) {
-                std::cout << "Removing " << total_invalid << " particles" << std::endl;
-                pc->destroy(pc->invalid.getView(), total_invalid);
-            }
-            else{
-                std::cout << "No particles removed" << std::endl;
-            }
-        }
-
-        Kokkos::fence();
-        ippl::Comm->barrier();
-
-        return total_invalid;
-    }
-  
 
     void advance() override {
       LeapFrogStep();     

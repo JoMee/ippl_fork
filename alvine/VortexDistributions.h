@@ -10,37 +10,39 @@ using view_type   = typename ippl::detail::ViewType<ippl::Vector<double, Dim>, 1
 using host_type   = typename ippl::ParticleAttrib<T>::HostMirror;
 using vector_type = ippl::Vector<double, Dim>;
 
-class BaseDistribution {
+class BaseVortexDistribution {
 public:
     view_type r;
     host_type omega;
     vector_type rmin, rmax, origin, center;
 
-    BaseDistribution(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    BaseVortexDistribution(vector_type r_min, vector_type r_max,
                      vector_type origin)
-        : r(r_)
-        , omega(omega_)
-        , rmin(r_min)
+        : rmin(r_min)
         , rmax(r_max)
         , origin(origin) {
         this->center = rmin + 0.5 * (rmax - rmin);
     }
     KOKKOS_INLINE_FUNCTION virtual void operator()(const size_t i) const = 0;
+    
+    void setR(view_type& r_) { r = r_; }
+
+    void setOmega(host_type& omega_) { omega = omega_; }
 };
 
-class AllOnes : BaseDistribution {
+class AllOnes : public BaseVortexDistribution {
 public:
-    AllOnes(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    AllOnes(vector_type r_min, vector_type r_max,
             vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const { this->omega(i) = 1; }
 };
 
-class Disk : BaseDistribution {
+class Disk : public BaseVortexDistribution {
 public:
-    Disk(view_type r_, host_type omega_, vector_type r_min, vector_type r_max, vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+    Disk(vector_type r_min, vector_type r_max, vector_type origin)
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         vector_type dist = this->r(i) - this->center;
@@ -58,11 +60,11 @@ public:
     }
 };
 
-class GaussianDisk : BaseDistribution {
+class GaussianDisk : public BaseVortexDistribution {
 public:
-    GaussianDisk(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    GaussianDisk(vector_type r_min, vector_type r_max,
                  vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         vector_type dist = this->r(i) - this->center;
@@ -82,11 +84,11 @@ public:
     }
 };
 
-class HalfPlane : BaseDistribution {
+class HalfPlane : public BaseVortexDistribution {
 public:
-    HalfPlane(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    HalfPlane(vector_type r_min, vector_type r_max,
               vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         if (this->r(i)(1) > this->center(1)) {
@@ -97,10 +99,10 @@ public:
     }
 };
 
-class Band : BaseDistribution {
+class Band : public BaseVortexDistribution {
 public:
-    Band(view_type r_, host_type omega_, vector_type r_min, vector_type r_max, vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+    Band(vector_type r_min, vector_type r_max, vector_type origin)
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         if (this->r(i)(1) > this->center(1) + 1 or this->r(i)(1) < this->center(1) - 1) {
@@ -112,11 +114,11 @@ public:
     }
 };
 
-class TwoBands : BaseDistribution {
+class TwoBands : public BaseVortexDistribution {
 public:
-    TwoBands(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    TwoBands(vector_type r_min, vector_type r_max,
              vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         // On the y axis (index=1)
@@ -151,11 +153,11 @@ public:
     }
 };
 
-class TwoBandsGaussian : BaseDistribution {
+class TwoBandsGaussian : public BaseVortexDistribution {
 public:
-    TwoBandsGaussian(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    TwoBandsGaussian(vector_type r_min, vector_type r_max,
                      vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         // On the y axis (index=1)
@@ -184,10 +186,10 @@ public:
     }
 };
 
-class Ring : BaseDistribution {
+class Ring : public BaseVortexDistribution {
 public:
-    Ring(view_type r_, host_type omega_, vector_type r_min, vector_type r_max, vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+    Ring(vector_type r_min, vector_type r_max, vector_type origin)
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         vector_type dist = this->r(i) - this->center;
@@ -204,11 +206,11 @@ public:
     }
 };
 
-class ConcentricCircles : BaseDistribution {
+class ConcentricCircles : public BaseVortexDistribution {
 public:
-    ConcentricCircles(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    ConcentricCircles(vector_type r_min, vector_type r_max,
                       vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         vector_type dist = this->r(i) - this->center;
@@ -227,11 +229,11 @@ public:
     }
 };
 
-class TwoDisks : BaseDistribution {
+class TwoDisks : public BaseVortexDistribution {
 public:
-    TwoDisks(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    TwoDisks(vector_type r_min, vector_type r_max,
              vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         double proximity = 4.37;  // Distance between the center of the two disks
@@ -267,11 +269,11 @@ public:
     }
 };
 
-class JetPenetration : BaseDistribution {
+class JetPenetration : public BaseVortexDistribution {
 public:
-    JetPenetration(view_type r_, host_type omega_, vector_type r_min, vector_type r_max,
+    JetPenetration(vector_type r_min, vector_type r_max,
                    vector_type origin)
-        : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
+        : BaseVortexDistribution(r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         double width = 0.1;

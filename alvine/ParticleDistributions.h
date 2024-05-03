@@ -31,26 +31,27 @@ public:
     vector_type rmin, rmax, center;
     size_type np_m;
 
-    BaseParticleDistribution(view_type r_, vector_type r_min, vector_type r_max,
+    BaseParticleDistribution(vector_type r_min, vector_type r_max,
                              size_type np_m)
-        : r(r_)
-        , rmin(r_min)
+        : rmin(r_min)
         , rmax(r_max)
         , np_m(np_m){
         this->center = rmin + 0.5 * (rmax - rmin);
     }
 
+    void setR(view_type& r_) { r = r_; }
+
     KOKKOS_INLINE_FUNCTION virtual void operator()(const size_t i) const = 0;
 };
 
-class CircleDistribution : BaseParticleDistribution {
+class CircleDistribution : public BaseParticleDistribution {
 public:
     int particles_in_circle[10 * 3];
     int n_circles_m = 10 * 3;
 
-    CircleDistribution(view_type r_, vector_type r_min, vector_type r_max,
+    CircleDistribution(vector_type r_min, vector_type r_max,
                        size_type np_m)
-        : BaseParticleDistribution(r_, r_min, r_max, np_m) {
+        : BaseParticleDistribution(r_min, r_max, np_m) {
 
         // Number of particles in the circle
         int M = int(2 * (np_m - 1) / ((n_circles_m - 1) * (n_circles_m - 1)));
@@ -85,15 +86,15 @@ public:
     }
 };
 
-class EquidistantDistribution : BaseParticleDistribution {
+class EquidistantDistribution : public BaseParticleDistribution {
 public:
     // Random number generator
     double increments[Dim];
     int nr_m;
 
-    EquidistantDistribution(view_type r_, vector_type r_min, vector_type r_max,
+    EquidistantDistribution(vector_type r_min, vector_type r_max,
                      size_type np_m)
-        : BaseParticleDistribution(r_, r_min, r_max, np_m) {
+        : BaseParticleDistribution(r_min, r_max, np_m) {
         nr_m = std::pow(np_m, 1.0/Dim);
         std::cout << "EquidistantDistribution particles: " << nr_m << std::endl;
         for (unsigned int i = 0; i < Dim; i++) {
@@ -110,7 +111,7 @@ public:
     }
 };
 
-class RandDistribution : BaseParticleDistribution {
+class RandDistribution : public BaseParticleDistribution {
 public:
     // Random number generator
     double rmin[Dim];
@@ -119,9 +120,9 @@ public:
     int seed = 42;
     GeneratorPool rand_pool = GeneratorPool((size_type)(seed + 100 * ippl::Comm->rank()));
 
-    RandDistribution(view_type r_, vector_type r_min, vector_type r_max,
+    RandDistribution(vector_type r_min, vector_type r_max,
                      size_type np_m)
-        : BaseParticleDistribution(r_, r_min, r_max, np_m) {
+        : BaseParticleDistribution(r_min, r_max, np_m) {
         for (unsigned int i = 0; i < Dim; i++) {
             rmin[i] = r_min[i];
             rmax[i] = r_max[i];
