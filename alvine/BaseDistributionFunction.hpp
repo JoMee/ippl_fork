@@ -65,6 +65,36 @@ public:
 };
 
 template<typename T, unsigned Dim>
+class Band : public CompositeDistributionFunction<ippl::Vector<T, Dim>, T> {
+    int dim_;
+
+public:
+    Band(int dim=0) : CompositeDistributionFunction<ippl::Vector<T, Dim>, T>(
+        [dim](ippl::Vector<T, Dim> x) -> T {
+            return (x[dim] <= 0.5 && x[dim] >= -0.5) ? 1 : 0;
+        }), dim_(dim) {}
+
+};
+
+template<typename T, unsigned Dim>
+class Hypercube : public CompositeDistributionFunction<ippl::Vector<T, Dim>, T> {
+
+public:
+    Hypercube() : CompositeDistributionFunction<ippl::Vector<T, Dim>, T>(
+        [](ippl::Vector<T, Dim> x) -> T {
+            int inside = 1;
+            for (size_t d = 0; d < Dim; d++) {
+                if (x[d] > 0.5 || x[d] < -0.5) {
+                    inside = 0;
+                    break;
+                }
+            }
+            return inside;
+        }) {}
+
+};
+
+template<typename T, unsigned Dim>
 class ShiftTransformation : public DistributionTransformationStrategy<ippl::Vector<T, Dim>, T> {
     ippl::Vector<T, Dim> shift;
 
@@ -81,4 +111,24 @@ public:
         };
     }
 };
+
+
+template<typename T, unsigned Dim>
+class ScaleTransformation : public DistributionTransformationStrategy<ippl::Vector<T, Dim>, T> {
+    ippl::Vector<T, Dim> scale;
+
+public:
+    ScaleTransformation(ippl::Vector<T, Dim> scale) : scale(scale) {}
+
+    std::function<T(ippl::Vector<T, Dim>)> transform(const std::function<T(ippl::Vector<T, Dim>)>& original) const override {
+        return [this, original](ippl::Vector<T, Dim> x) {
+            ippl::Vector<T, Dim> scaled;
+            for (size_t d = 0; d < Dim; d++) {
+                scaled[d] = x[d] / scale[d];
+            }
+            return original(scaled);
+        };
+    }
+};
+
 #endif

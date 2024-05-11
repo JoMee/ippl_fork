@@ -128,7 +128,7 @@ public:
     void placeParticles(
         typename ippl::detail::ViewType<ippl::Vector<T, Dim>, 1>::view_type& container,
         ippl::Vector<T, Dim> rmin, ippl::Vector<T, Dim> rmax) const override {
-        ippl::Vector<T, Dim> dr = (rmax - rmin) / (num_points - 1);
+        ippl::Vector<T, Dim> dr = (rmax - rmin) / num_points;
 
         size_t total_num =
             std::reduce(num_points.begin(), num_points.end(), 1, std::multiplies<int>());
@@ -139,7 +139,7 @@ public:
 
             Kokkos::parallel_for(
                 "2DGridInit", policy, KOKKOS_LAMBDA(const int i, const int j) {
-                    ippl::Vector<T, 2> loc(i, j);
+                    ippl::Vector<int, 2> loc(i, j);
                     container(i * num_points(0) + j) = rmin + dr * loc;
                 });
         } else if constexpr (Dim == 3) {
@@ -151,6 +151,65 @@ public:
                     ippl::Vector<int, 3> loc(i, j, k);
                     this->particle_container(i * num_points(0) + j * num_points(1) * num_points(0)
                                              + k) = dr * loc;
+                });
+        }
+        Kokkos::fence();
+    }
+};
+
+template <typename T, unsigned Dim>
+class RandomPlacement : public PlacementStrategy<T, Dim> {
+    ippl::Vector<int, Dim> num_points;
+    ippl::Vector<T, Dim> rmin;
+    ippl::Vector<T, Dim> rmax;
+
+    int seed = 42;
+    GeneratorPool rand_pool = GeneratorPool((size_type)(seed + 100 * ippl::Comm->rank()));
+
+public:
+    RandomPlacement(ippl::Vector<int, Dim> num_points_)
+        : num_points(num_points_) {}
+
+    void placeParticles(
+        typename ippl::detail::ViewType<ippl::Vector<T, Dim>, 1>::view_type& container,
+        ippl::Vector<T, Dim> rmin, ippl::Vector<T, Dim> rmax) const override {
+
+        size_t total_num =
+            std::reduce(num_points.begin(), num_points.end(), 1, std::multiplies<int>());
+        Kokkos::resize(container, total_num);
+
+        if constexpr (Dim == 2) {
+            Kokkos::MDRangePolicy<Kokkos::Rank<2>> policy({0, 0}, {num_points(0), num_points(1)});
+
+            Kokkos::parallel_for(
+                "2DRandInit", policy, KOKKOS_LAMBDA(const int i, const int j) {
+                    typename GeneratorPool::generator_type rand_gen = rand_pool.get_state();
+                    ippl::Vector<int, 2> loc;
+
+                    for (unsigned d = 0; d < 2; ++d) {
+                        loc[d] = rand_gen.drand(rmin[d], rmax[d]);
+                    }
+                    
+                    container(i * num_points(0) + j) = loc;
+                    rand_pool.free_state(rand_gen);
+                });
+
+        } else if constexpr (Dim == 3) {
+            Kokkos::MDRangePolicy<Kokkos::Rank<3>> policy(
+                {0, 0, 0}, {num_points(0), num_points(1), num_points(2)});
+
+            Kokkos::parallel_for(
+                "3DRandInit", policy, KOKKOS_LAMBDA(const int i, const int j, const int k) {
+                    typename GeneratorPool::generator_type rand_gen = rand_pool.get_state();
+                    ippl::Vector<int, 3> loc;
+
+                    for (unsigned d = 0; d < 3; ++d) {
+                        loc[d] = rand_gen.drand(rmin[d], rmax[d]);
+                    }
+
+                    this->particle_container(i * num_points(0) + j * num_points(1) * num_points(0)
+                                             + k) = loc;
+                    rand_pool.free_state(rand_gen);
                 });
         }
         Kokkos::fence();
@@ -181,7 +240,7 @@ public:
         this->generateDistribution();
 
         this->applyFilter([this, threshold](const ippl::Vector<T, Dim>& point) -> bool {
-            return (this->distFunction.evaluate(point) < threshold);
+            return (this->distFunction.evaluate(point) > threshold);
         });
     }
 };
