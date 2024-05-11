@@ -52,7 +52,6 @@ public:
 protected:
     double time_m;
     double dt_m;
-    double energy_m;
     Vector_t<double, Dim> rmin_m;
     Vector_t<double, Dim> rmax_m;
     Vector_t<double, Dim> origin_m;
@@ -120,11 +119,20 @@ public:
         }
     }
 
-    void computeEnergy() {
-        std::shared_ptr<ParticleContainer<T, Dim>> pc =
-            std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
+    void initDumpEnergy() {
+        Inform energyout(NULL, "energy.csv", Inform::OVERWRITE);
+        energyout.precision(16);
+        energyout.setf(std::ios::scientific, std::ios::floatfield);
+        energyout << "energy" << endl;
+    }
 
-        this->energy_m = 0.0;
+    void dumpEnergy() {
+        std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
+        double energy = 0.0;
+        static IpplTimings::TimerRef ETimer = IpplTimings::getTimer("energy");
+
+        IpplTimings::startTimer(ETimer);
+
         Kokkos::parallel_reduce(
             "Compute energy", this->np_m,
             KOKKOS_LAMBDA(const int i, double& local_sum) {
@@ -132,7 +140,12 @@ public:
                     local_sum += pc->P(i)[d] * pc->P(i)[d];
                 }
             },
-            this->energy_m);
+            energy);
+
+        IpplTimings::stopTimer(ETimer);
+
+        Inform energyout(NULL, "energy.csv", Inform::APPEND);
+        energyout << energy << endl;
     }
 };
 #endif

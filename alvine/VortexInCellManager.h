@@ -45,12 +45,6 @@ public:
 
     void pre_run() override {
 
-
-      Inform energyout(NULL, "energy.csv", Inform::OVERWRITE);
-      energyout.precision(16);
-      energyout.setf(std::ios::scientific, std::ios::floatfield);
-      energyout << "energy" << endl;
-
       for (unsigned i = 0; i < Dim; i++) {
           this->domain_m[i] = ippl::Index(this->nr_m[i]);
       }
@@ -84,6 +78,7 @@ public:
       }
 
       this->getParticleContainer()->initDump();
+      this->initDumpEnergy();
 
       this->fsolver_m->initSolver(this->fcontainer_m);
 
@@ -103,8 +98,6 @@ public:
       pc->R_old = pc->R;
       pc->R = pc->R_old + pc->P * this->dt_m;
       pc->update();
-      
-      this->computeEnergy();
     }
 
 
@@ -156,7 +149,6 @@ public:
       static IpplTimings::TimerRef RTimer           = IpplTimings::getTimer("pushPosition");
       static IpplTimings::TimerRef updateTimer      = IpplTimings::getTimer("update");
       static IpplTimings::TimerRef SolveTimer       = IpplTimings::getTimer("solve");
-      static IpplTimings::TimerRef ETimer           = IpplTimings::getTimer("energy");
       
       std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
 
@@ -189,19 +181,11 @@ public:
       pc->update();
       IpplTimings::stopTimer(updateTimer);
 
-      IpplTimings::startTimer(ETimer);
-      this->computeEnergy();
-      IpplTimings::stopTimer(ETimer);
-
     }
 
     void dump() override {
         this->getParticleContainer()->dump(this->it_m);
-
-
-      Inform energyout(NULL, "energy.csv", Inform::APPEND);
-      energyout << this->energy_m << endl;
-       
+        this->dumpEnergy();       
     }
 };
 #endif
