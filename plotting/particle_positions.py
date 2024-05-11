@@ -5,10 +5,7 @@ import numpy as np
 from matplotlib.animation import FuncAnimation
 
 # Change this path to the path of the txt file
-PAR_DIST="EquidistantDistribution"
-VOR_DIST="Disk"
-
-PATH=f"{PAR_DIST}_{VOR_DIST}"
+PATH="../build_serial/alvine"
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/particles.csv')
@@ -19,8 +16,8 @@ particle_indices = df['index'].unique()
 
 # Create a figure and axis
 fig, ax = plt.subplots(figsize=(10, 10))
-ax.set_xlim((0,30))
-ax.set_ylim((0,30))
+ax.set_xlim((0,10))
+ax.set_ylim((0,10))
 
 # Initialize scatter plot with empty data and color map
 scat = ax.scatter([], [], c=[], s=2, cmap='viridis')
@@ -37,5 +34,5 @@ ani = FuncAnimation(fig, update, frames=len(times), blit=True, interval=50)
 
 # Show animation
 # plt.show()
-print(f"Saving animation to {PATH}/particles.gif")
-ani.save(f'{PATH}/particles.gif', fps=30)
+print("Saving animation to particles.gif")
+ani.save('particles.gif', fps=30)
