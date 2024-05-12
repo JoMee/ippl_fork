@@ -61,10 +61,8 @@ public:
           csvout << "time,index,pos_x,pos_y,pos_z" << endl;
       }
 
-      Inform energyout(NULL, "energy.csv", Inform::OVERWRITE);
-      energyout.precision(16);
-      energyout.setf(std::ios::scientific, std::ios::floatfield);
-      energyout << "energy" << endl;
+      this->initDumpEnergy();
+
 
       for (unsigned i = 0; i < Dim; i++) {
           this->domain_m[i] = ippl::Index(this->nr_m[i]);
@@ -73,9 +71,6 @@ public:
       Vector_t<double, Dim> dr = this->rmax_m - this->rmin_m;
 
       this->hr_m = dr / this->nr_m;
-
-      // Courant condition
-      this->dt_m = std::min(0.05, 0.5 * ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) );
 
       this->it_m = 0;
       this->time_m = 0.0;
@@ -113,11 +108,29 @@ public:
 
       std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
 
+      // set timestep to fullfill CFL condition
+      double v_max;
+      Kokkos::parallel_reduce(
+            " Find max velocity", this->np_m,
+            KOKKOS_LAMBDA(const int i, double& local_max) {
+                double v_local = 0.0;
+                for (unsigned d = 0; d < Dim; d++) {
+                    v_local += pc->P(i)[d] * pc->P(i)[d];
+                }
+                v_local = std::sqrt(v_local);
+                local_max = std::max(local_max, v_local);
+            },
+            Kokkos::Max<double>(v_max));
+
+      // dt <= dx / v_max
+      this->dt_m = ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) / v_max;
+
+      Inform msg("Velocity");
+      msg << "Max velocity: " << v_max << ", Time step: " << this->dt_m << endl;
+
       pc->R_old = pc->R;
       pc->R = pc->R_old + pc->P * this->dt_m;
       pc->update();
-      
-      this->computeEnergy();
     }
 
 
@@ -176,7 +189,6 @@ public:
       static IpplTimings::TimerRef RTimer           = IpplTimings::getTimer("pushPosition");
       static IpplTimings::TimerRef updateTimer      = IpplTimings::getTimer("update");
       static IpplTimings::TimerRef SolveTimer       = IpplTimings::getTimer("solve");
-      static IpplTimings::TimerRef ETimer           = IpplTimings::getTimer("energy");
       
       std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
 
@@ -208,11 +220,6 @@ public:
       IpplTimings::startTimer(updateTimer);
       pc->update();
       IpplTimings::stopTimer(updateTimer);
-
-      IpplTimings::startTimer(ETimer);
-      this->computeEnergy();
-      IpplTimings::stopTimer(ETimer);
-
     }
 
     void dump() override {
@@ -228,8 +235,7 @@ public:
         csvout << "," << pc->omega(i) << endl;
       }
 
-      Inform energyout(NULL, "energy.csv", Inform::APPEND);
-      energyout << this->energy_m << endl;
+      this->dumpEnergy();
        
     }
 };

@@ -3,11 +3,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Change this path to the path of the txt file
-PATH="../build_serial/alvine"
+PAR_DIST="EquidistantDistribution"
+VOR_DIST="GaussianDisk"
+
+PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/energy.csv')
 
 plt.plot(df['energy'])
-
-plt.savefig('energy.png')
+# Show animation
+# plt.show()
+plt.savefig(f'{PATH}/energy.png')

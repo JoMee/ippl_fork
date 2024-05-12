@@ -5,7 +5,10 @@ import numpy as np
 from matplotlib.animation import FuncAnimation
 
 # Change this path to the path of the txt file
-PATH="../build_serial/alvine"
+PAR_DIST="EquidistantDistribution"
+VOR_DIST="GaussianDisk"
+
+PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/particles.csv')

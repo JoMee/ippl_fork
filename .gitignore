@@ -301,3 +301,10 @@ TSWLatexianTemp*
 heffte/
 kokkos/
 lib/
+
+# files created by doxygen
+doc/html/
+doc/latex/
+
+# output files of simulation
+runs/
