@@ -67,9 +67,6 @@ public:
 
       this->hr_m = dr / this->nr_m;
 
-      // Courant condition
-      this->dt_m = std::min(0.05, 0.5 * ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) );
-
       this->it_m = 0;
       this->time_m = 0.0;
 
@@ -109,6 +106,21 @@ public:
       this->grid2par();
 
       std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
+
+      // set timestep to fullfill CFL condition
+      double v_max;
+      Kokkos::parallel_reduce(
+            " Find max velocity", this->np_m,
+            KOKKOS_LAMBDA(const int i, double& local_max) {
+                double v_local = 0.0;
+                for (unsigned d = 0; d < Dim; d++) {
+                    v_local += pc->P(i)[d] * pc->P(i)[d];
+                }
+                local_max = std::max(local_max, v_local);
+            },
+            Kokkos::Max<double>(v_max));
+
+      this->dt_m = ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) / v_max;
 
       pc->R_old = pc->R;
       pc->R = pc->R_old + pc->P * this->dt_m;
