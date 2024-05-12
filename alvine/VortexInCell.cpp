@@ -19,7 +19,7 @@
 //     Example:
 //     makdir build_*/alvine/data
 //     chmod +x data
-//     srun ./VortexInCell 128 128 100 FFT --overallocate 2.0 --info 10
+//     srun ./VortexInCell 128 128 100 FFT --info 10
 //     srun ./VortexInCell 128 128
 //     to build, call 
 //          make VortexInCell 
@@ -72,6 +72,10 @@ int main(int argc, char* argv[]) {
         double lbt = std::atof(argv[arg++]);
 
         msg << nt << endl;
+
+
+
+
 
         VortexInCellManager<T, Dim, EquidistantDistribution, ConcentricCircles> manager(nt, nr, solver, lbt);
 

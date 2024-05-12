@@ -37,5 +37,5 @@ ani = FuncAnimation(fig, update, frames=len(times), blit=True, interval=50)
 
 # Show animation
 # plt.show()
-print(f"Saving animation to {PATH}/particles.gif")
-ani.save(f'{PATH}/particles.gif', fps=30)
+print("Saving animation to particles.gif")
+ani.save('particles.gif', fps=30)

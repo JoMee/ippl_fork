@@ -97,9 +97,9 @@ public:
     }
 };
 
-class Band : BaseDistribution {
+class OneBand : BaseDistribution {
 public:
-    Band(view_type r_, host_type omega_, vector_type r_min, vector_type r_max, vector_type origin)
+    OneBand(view_type r_, host_type omega_, vector_type r_min, vector_type r_max, vector_type origin)
         : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {

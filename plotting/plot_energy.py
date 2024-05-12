@@ -1,8 +1,6 @@
 """Module to plot the particle positions from a txt file."""
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
-from matplotlib.animation import FuncAnimation
 
 # Change this path to the path of the txt file
 PAR_DIST="EquidistantDistribution"
