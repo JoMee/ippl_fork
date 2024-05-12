@@ -121,7 +121,7 @@ public:
         Inform energyout(NULL, "energy.csv", Inform::OVERWRITE);
         energyout.precision(16);
         energyout.setf(std::ios::scientific, std::ios::floatfield);
-        energyout << "energy" << endl;
+        energyout << "time,energy" << endl;
     }
 
     void dumpEnergy() {
@@ -144,7 +144,7 @@ public:
         IpplTimings::stopTimer(ETimer);
 
         Inform energyout(NULL, "energy.csv", Inform::APPEND);
-        energyout << energy << endl;
+        energyout << this->it_m << "," << energy << endl;
     }
 };
 #endif

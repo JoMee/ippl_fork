@@ -6,9 +6,9 @@ from matplotlib.animation import FuncAnimation
 
 # Change this path to the path of the txt file
 PAR_DIST="EquidistantDistribution"
-VOR_DIST="Disk"
+VOR_DIST="GaussianDisk"
 
-PATH=f"{PAR_DIST}_{VOR_DIST}"
+PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/energy.csv')
