@@ -116,6 +116,7 @@ public:
                 for (unsigned d = 0; d < Dim; d++) {
                     v_local += pc->P(i)[d] * pc->P(i)[d];
                 }
+                v_local = std::sqrt(v_local);
                 local_max = std::max(local_max, v_local);
             },
             Kokkos::Max<double>(v_max));
@@ -125,8 +126,6 @@ public:
       pc->R_old = pc->R;
       pc->R = pc->R_old + pc->P * this->dt_m;
       pc->update();
-      
-      this->computeEnergy();
     }
 
 

@@ -6,7 +6,7 @@ VOR_DIST="Disk"
 
 DIR="${PAR_DIST}_${VOR_DIST}"
 
-mkdir "$../runs/{DIR}/"
+mkdir "../runs/${DIR}/"
 
 sed -i -e"s/VortexInCellManager<T, Dim, .*, .*>/VortexInCellManager<T, Dim, ${PAR_DIST}, ${VOR_DIST}>/" ../alvine/VortexInCell.cpp
 
