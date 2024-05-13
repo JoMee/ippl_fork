@@ -4,13 +4,14 @@ import pandas as pd
 import numpy as np
 from matplotlib.animation import FuncAnimation
 import sys
+import seaborn as sns
+sns.set_style("dark")
 
 # Get path from argument
 args = sys.argv
 PATH = '.'
 if len(args) > 1:
     PATH = args[1]
-    print(PATH)
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/particles.csv')
@@ -25,7 +26,7 @@ ax.set_xlim((0,10))
 ax.set_ylim((0,10))
 
 # Initialize scatter plot with empty data and color map
-scat = ax.scatter([], [], c=[], s=2, cmap='viridis')
+scat = ax.scatter([], [], c=[], s=2, cmap='PRGn')
 
 def update(frame):
     current_time = times[frame]
@@ -40,4 +41,4 @@ ani = FuncAnimation(fig, update, frames=len(times), blit=True, interval=50)
 # Show animation
 # plt.show()
 print("Saving animation to particles.gif")
-ani.save('{PATH}/particles.gif', fps=30)
+ani.save(f'{PATH}/particles.gif', fps=30)
