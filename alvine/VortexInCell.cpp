@@ -47,8 +47,7 @@ const char* TestName   = "VortexInCell";
 
 #include "Manager/PicManager.h"
 #include "VortexInCellManager.h"
-#include "VortexDistributions.h"
-#include "ParticleDistributions.h"
+#include "PlacementConfigurations.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -77,7 +76,7 @@ int main(int argc, char* argv[]) {
 
 
 
-        VortexInCellManager<T, Dim, EquidistantDistribution, ConcentricCircles> manager(nt, nr, solver, lbt);
+        VortexInCellManager<T, Dim, TwoCircles> manager(nt, nr, solver, lbt);
 
         manager.pre_run();
 

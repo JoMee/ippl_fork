@@ -18,13 +18,14 @@
 #include "Random/InverseTransformSampling.h"
 #include "Random/NormalDistribution.h"
 #include "Random/Randu.h"
-#include "VortexDistributions.h"
+#include "PlacementConfigurations.hpp"
+
 
 using view_type     = typename ippl::detail::ViewType<ippl::Vector<double, Dim>, 1>::view_type;
 using host_type     = typename ippl::ParticleAttrib<T>::HostMirror;
 using GeneratorPool = typename Kokkos::Random_XorShift64_Pool<>;
 
-template <typename T, unsigned Dim, typename ParticleDistribution, typename VortexDistribution>
+template <typename T, unsigned Dim, typename InitialPlacement_>
 class VortexInCellManager : public AlvineManager<T, Dim> {
 public:
     using ParticleContainer_t = ParticleContainer<T, Dim>;
@@ -90,7 +91,9 @@ public:
       
       if constexpr (Dim == 2) {
           std::shared_ptr<FieldContainer<T, 2>> fc = std::dynamic_pointer_cast<FieldContainer<T, 2>>(this->fcontainer_m);
+
           this->setParticleContainer(std::make_shared<TwoDimParticleContainer<T>>(fc->getMesh(), fc->getFL()));
+          
           this->setFieldSolver( std::make_shared<TwoDimFFTSolverStrategy<T>>() );
           this->setParticleFieldStrategy( std::make_shared<TwoDimParticleFieldStrategy<T>>() );
 
@@ -102,7 +105,12 @@ public:
 
       //this->setLoadBalancer( std::make_shared<LoadBalancer_t>( this->lbt_m, this->fcontainer_m, this->pcontainer_m, this->fsolver_m) );
 
-      initalizeParticles();
+      std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
+      std::shared_ptr<FieldContainer<T, Dim>> fc = std::dynamic_pointer_cast<FieldContainer<T, Dim>>(this->fcontainer_m);
+
+      InitialPlacement_ initial_placement(pc, fc);
+      initial_placement.initalizeParticles(this->nr_m);
+      this->np_m = initial_placement.np_m;
 
       this->par2grid();
 
@@ -111,59 +119,12 @@ public:
 
       this->grid2par();
 
-      std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
 
       pc->R_old = pc->R;
       pc->R = pc->R_old + pc->P * this->dt_m;
       pc->update();
       
       this->computeEnergy();
-    }
-
-
-    void initalizeParticles() {
-        // This needs a wrapper but is just to illustrate how to combine and add the distributions
-        std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
-
-        std::cout << "syn" << std::endl;
-        GridDistribution<T, Dim> grid(this->nr_m, this->rmin_m, this->rmax_m);
-
-
-
-
-
-
-
-        Circle<T, Dim> circ(1.0);
-
-        Vector_t<T, Dim> center = 0.5 * (this->rmax_m - this->rmin_m);
-        ShiftTransformation<T, Dim> shift_to_center(-center);
-    
-        circ.applyTransformation(shift_to_center);
-        FilteredDistribution<T, Dim> filteredDist(circ, this->rmin_m, this->rmax_m, new GridPlacement<T, Dim>(this->nr_m));
-        
-        this->np_m = filteredDist.getNumParticles();
-        
-        std::cout << filteredDist.getNumParticles() << std::endl;
-        this->np_m = filteredDist.getNumParticles();
-        
-        view_type particle_view = filteredDist.getParticles();
-
-        pc->create(this->np_m);
-
-
-        for (int i = 0; i < 5; i++) {
-            Circle<T, Dim> added_circle((i + 1) * 0.5);
-            added_circle.applyTransformation(shift_to_center);
-            circ += added_circle;
-        }
-      
-        Kokkos::parallel_for("AddParticles", filteredDist.getNumParticles(), KOKKOS_LAMBDA(const int& i) {
-            pc->R(i) =  particle_view(i);
-            pc->omega(i) = circ.evaluate(pc->R(i)); 
-        });
-
-        Kokkos::fence();
     }
 
     void advance() override {
