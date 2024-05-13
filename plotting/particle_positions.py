@@ -5,8 +5,8 @@ import numpy as np
 from matplotlib.animation import FuncAnimation
 
 # Change this path to the path of the txt file
-PAR_DIST="EquidistantDistribution"
-VOR_DIST="GaussianDisk"
+PAR_DIST="CircleDistribution"
+VOR_DIST="Disk"
 
 PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
 
@@ -38,4 +38,4 @@ ani = FuncAnimation(fig, update, frames=len(times), blit=True, interval=50)
 # Show animation
 # plt.show()
 print("Saving animation to particles.gif")
-ani.save('particles.gif', fps=30)
+ani.save('{PATH}/particles.gif', fps=30)

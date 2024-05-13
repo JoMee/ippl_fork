@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
 
 
-        VortexInCellManager<T, Dim, EquidistantDistribution, ConcentricCircles> manager(nt, nr, solver, lbt);
+        VortexInCellManager<T, Dim, CircleDistribution, Disk> manager(nt, nr, solver, lbt);
 
         manager.pre_run();
 

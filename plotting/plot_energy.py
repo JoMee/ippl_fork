@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Change this path to the path of the txt file
-PAR_DIST="EquidistantDistribution"
-VOR_DIST="GaussianDisk"
+PAR_DIST="CircleDistribution"
+VOR_DIST="Disk"
 
 PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
 

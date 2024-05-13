@@ -75,6 +75,9 @@ public:
       this->it_m = 0;
       this->time_m = 0.0;
 
+      int density = 1; // particles per cell
+      set_number_of_particles(density);
+
       this->decomp_m.fill(true);
       this->isAllPeriodic_m = true;
 
@@ -97,7 +100,8 @@ public:
 
       //this->setLoadBalancer( std::make_shared<LoadBalancer_t>( this->lbt_m, this->fcontainer_m, this->pcontainer_m, this->fsolver_m) );
 
-      initalizeParticles();
+      size_type removed = initializeParticles();
+      this->np_m -= removed;
 
       this->par2grid();
 
@@ -134,49 +138,63 @@ public:
     }
 
 
-    void initalizeParticles() {
-        // This needs a wrapper but is just to illustrate how to combine and add the distributions
-        std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
-
-        std::cout << "syn" << std::endl;
-        GridDistribution<T, Dim> grid(this->nr_m, this->rmin_m, this->rmax_m);
-
-
-
-
-
-
-
-        Circle<T, Dim> circ(1.0);
-
-        Vector_t<T, Dim> center = 0.5 * (this->rmax_m - this->rmin_m);
-        ShiftTransformation<T, Dim> shift_to_center(-center);
-    
-        circ.applyTransformation(shift_to_center);
-        FilteredDistribution<T, Dim> filteredDist(circ, this->rmin_m, this->rmax_m, new GridPlacement<T, Dim>(this->nr_m));
-        
-        this->np_m = filteredDist.getNumParticles();
-        
-        std::cout << filteredDist.getNumParticles() << std::endl;
-        this->np_m = filteredDist.getNumParticles();
-        
-        view_type particle_view = filteredDist.getParticles();
-
-        pc->create(this->np_m);
-
-
-        for (int i = 0; i < 5; i++) {
-            Circle<T, Dim> added_circle((i + 1) * 0.5);
-            added_circle.applyTransformation(shift_to_center);
-            circ += added_circle;
+    void set_number_of_particles(int density) {
+        int particles = 1;
+        for (unsigned i = 0; i < Dim; i++) {
+            particles *= this->nr_m[i];
         }
-      
-        Kokkos::parallel_for("AddParticles", filteredDist.getNumParticles(), KOKKOS_LAMBDA(const int& i) {
-            pc->R(i) =  particle_view(i);
-            pc->omega(i) = circ.evaluate(pc->R(i)); 
-        });
+        this->np_m = particles*density;
+        std::cout << "Number of particles: " << this->np_m << std::endl;
+    }
+
+    int initializeParticles() {
+
+      std::shared_ptr<ParticleContainer<T, Dim>> pc = std::dynamic_pointer_cast<ParticleContainer<T, Dim>>(this->pcontainer_m);
+
+        // Create np_m particles in container
+        size_type totalP = this->np_m;
+        pc->create(totalP);  // TODO: local number of particles? from kokkos?
+
+        // Assign positions
+        view_type* R = &(pc->R.getView());  // Position vector
+        ParticleDistribution particle_distribution(*R, this->rmin_m, this->rmax_m, this->np_m);
+        Kokkos::parallel_for(totalP, particle_distribution);
+
+        // Assign vorticity
+        host_type omega_host = pc->omega.getHostMirror();  // Vorticity values
+        VortexDistribution vortex_dist(*R, omega_host, this->rmin_m, this->rmax_m, this->origin_m);
+        Kokkos::parallel_for(totalP, vortex_dist);
+        Kokkos::deep_copy(pc->omega.getView(), omega_host);
+
+        int total_invalid = 0;
+        if (this->remove_particles) {
+            
+            Kokkos::parallel_for(
+                "Mark vorticity null as invalid", totalP, KOKKOS_LAMBDA(const size_t i) {
+                    pc->invalid.getView()(i) = false;
+                    if (pc->omega.getView()(i) == 0) {
+                        pc->invalid.getView()(i) = true;
+                    }
+                });
+
+
+            for (unsigned i = 0; i < totalP; i++) {
+                pc->invalid.getView()(i) ? total_invalid++: total_invalid;
+            }
+            
+            if (total_invalid and (total_invalid < int(totalP))) {
+                std::cout << "Removing " << total_invalid << " particles" << std::endl;
+                pc->destroy(pc->invalid.getView(), total_invalid);
+            }
+            else{
+                std::cout << "No particles removed" << std::endl;
+            }
+        }
 
         Kokkos::fence();
+        ippl::Comm->barrier();
+
+        return total_invalid;
     }
 
     void advance() override {
