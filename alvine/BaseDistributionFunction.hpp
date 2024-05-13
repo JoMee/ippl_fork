@@ -22,6 +22,7 @@ class CompositeDistributionFunction : public AbstractDistributionFunction<Domain
     std::function<Range(Domain)> evaluateFn;
 
 public:
+    CompositeDistributionFunction() : evaluateFn([](Domain) -> Range { return Range(); }) {}
     CompositeDistributionFunction(std::function<Range(Domain)> fn) : evaluateFn(fn) {}
 
     Range evaluate(Domain input) const override {
