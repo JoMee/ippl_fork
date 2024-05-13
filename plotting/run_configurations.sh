@@ -3,7 +3,7 @@
 PAR_DIST="EquidistantDistribution"
 VOR_DIST="Disk"
 
-
+# cd ../runs
 DIR="${PAR_DIST}_${VOR_DIST}"
 
 mkdir "${DIR}/"
@@ -20,4 +20,11 @@ echo "Running ${PAR_DIST} with ${VOR_DIST}..."
 mv particles.csv ../../runs/$DIR/particles.csv
 mv energy.csv ../../runs/$DIR/energy.csv
 
-cd ../../runs
+cd ../../plotting
+LOCAL_PATH="../runs/${DIR}"
+
+python plot_energy.py $LOCAL_PATH
+python plot_initial_distribution.py $LOCAL_PATH
+python particle_positions.py $LOCAL_PATH
+
+cd ../runs

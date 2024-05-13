@@ -1,12 +1,15 @@
 """Module to plot the particle positions from a txt file."""
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
-# Change this path to the path of the txt file
-PAR_DIST="CircleDistribution"
-VOR_DIST="Disk"
+# Get path from argument
+args = sys.argv
+PATH = '.'
 
-PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
+if len(args) > 1:
+    PATH = args[1]
+    print(PATH)
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/energy.csv')

@@ -3,12 +3,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from matplotlib.animation import FuncAnimation
+import sys
 
-# Change this path to the path of the txt file
-PAR_DIST="CircleDistribution"
-VOR_DIST="Disk"
-
-PATH=f"../runs/{PAR_DIST}_{VOR_DIST}"
+# Get path from argument
+args = sys.argv
+PATH = '.'
+if len(args) > 1:
+    PATH = args[1]
+    print(PATH)
 
 # Load data from CSV file
 df = pd.read_csv(f'{PATH}/particles.csv')
