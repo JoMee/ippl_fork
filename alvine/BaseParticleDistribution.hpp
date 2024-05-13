@@ -217,16 +217,6 @@ public:
 };
 
 template <typename T, unsigned Dim>
-class GridDistribution : public ParticleDistributionBase<T, Dim> {
-public:
-    GridDistribution(ippl::Vector<int, Dim> num_points, ippl::Vector<T, Dim> rmin_,
-                     ippl::Vector<T, Dim> rmax_)
-        : ParticleDistributionBase<T, Dim>(rmin_, rmax_, new GridPlacement<T, Dim>(num_points)) {
-        this->generateDistribution();
-    }
-};
-
-template <typename T, unsigned Dim>
 class FilteredDistribution : public ParticleDistributionBase<T, Dim> {
 private:
     const AbstractDistributionFunction<ippl::Vector<T, Dim>, T>& distFunction;
