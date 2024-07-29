@@ -26,7 +26,7 @@ ax.set_xlim((0,10))
 ax.set_ylim((0,10))
 
 # Initialize scatter plot with empty data and color map
-scat = ax.scatter([], [], c=[], s=2, cmap='PRGn')
+scat = ax.scatter([], [], c=[], s=2, cmap='viridis')
 
 def update(frame):
     current_time = times[frame]

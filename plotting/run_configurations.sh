@@ -1,7 +1,7 @@
 
 # change the distribution and the geometry
 PAR_DIST="EquidistantDistribution"
-VOR_DIST="TwoBands"
+VOR_DIST="JetPenetration"
 TIME_STEPS=1000
 GRID_SIZE=128
 SOLVER="FFT"
@@ -29,4 +29,4 @@ cd ../../plotting
 python plot_energy.py $LOCAL_PATH
 python plot_initial_distribution.py $LOCAL_PATH
 python plot_4_frames.py $LOCAL_PATH
-# python particle_positions.py $LOCAL_PATH
+python particle_positions.py $LOCAL_PATH

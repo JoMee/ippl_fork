@@ -142,6 +142,8 @@ public:
             },
             energy);
 
+        energy /= this->np_m;
+
         IpplTimings::stopTimer(ETimer);
 
         Inform energyout(NULL, "energy.csv", Inform::APPEND);

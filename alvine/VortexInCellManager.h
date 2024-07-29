@@ -127,8 +127,8 @@ public:
             Kokkos::Max<double>(v_max));
 
       // dt <= dx / v_max
-      this->dt_m = ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) / v_max;
-
+        // Courant condition
+      this->dt_m = std::min(0.05, 0.5 * ( *std::min_element(this->hr_m.begin(), this->hr_m.end()) ) );
       Inform msg("Velocity");
       msg << "Max velocity: " << v_max << ", Time step: " << this->dt_m << endl;
 

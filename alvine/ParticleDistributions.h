@@ -68,7 +68,7 @@ public:
         }
 
         if (p_ < particles_in_circle[24]) {
-            double d     = 0.3;
+            double d     = 0.12;
             double r_    = double(circle) * d;
             double theta = double(particles_in_circle[circle] - p_)
                            / (particles_in_circle[circle] - particles_in_circle[circle - 1]);

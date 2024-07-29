@@ -103,11 +103,24 @@ public:
         : BaseDistribution(r_, omega_, r_min, r_max, origin) {}
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
-        if (this->r(i)(1) > this->center(1) + 1 or this->r(i)(1) < this->center(1) - 1) {
+        float width      = 0.8;
+        float separation = width / 2;
+
+        bool add_noise    = true;
+        float random_toss = static_cast<float>(random()) / RAND_MAX;
+        float increment   = static_cast<float>(random()) / RAND_MAX - 0.5;
+
+        float axis = this->center(1);
+        if (this->r(i)(1) > axis + separation or this->r(i)(1) < axis - separation) {
             // Outside of the band
             this->omega(i) = 0;
         } else {
             this->omega(i) = 1;
+            if (add_noise) {
+                if (random_toss < 0.05) {
+                    this->omega(i) += increment/8;
+                }
+            }
         }
     }
 };
@@ -120,28 +133,28 @@ public:
 
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         // On the y axis (index=1)
-        float separation = this->center(1) / 2;
-        float width      = 0.8;
+        float separation = 3;
+        float width      = 1.2;
 
-        float axis_first_band  = this->center(1) + separation / 2;
-        float axis_second_band = this->center(1) - separation / 2;
+        float axis_upper_band  = this->center(1) + separation / 2;
+        float axis_lower_band = this->center(1) - separation / 2;
 
-        bool add_noise    = false;
+        bool add_noise    = true;
         float random_toss = static_cast<float>(random()) / RAND_MAX;
         float increment   = static_cast<float>(random()) / RAND_MAX - 0.5;
 
-        if (this->r(i)(1) < axis_first_band + width and this->r(i)(1) > axis_first_band) {
+        if (this->r(i)(1) < axis_upper_band + width and this->r(i)(1) > axis_upper_band) {
             this->omega(i) = 1;
             if (add_noise) {
-                if (random_toss < 0.1) {
-                    this->omega(i) += increment;
+                if (random_toss < 0.3) {
+                    this->omega(i) += increment/2;
                 }
             }
-        } else if (this->r(i)(1) < axis_second_band and this->r(i)(1) > axis_second_band - width) {
+        } else if (this->r(i)(1) < axis_lower_band and this->r(i)(1) > axis_lower_band - width) {
             this->omega(i) = -1;
             if (add_noise) {
-                if (random_toss < 0.1) {
-                    this->omega(i) += increment;
+                if (random_toss < 0.3) {
+                    this->omega(i) += increment/2;
                 }
             }
         } else {
@@ -160,7 +173,7 @@ public:
     KOKKOS_INLINE_FUNCTION void operator()(const size_t i) const {
         // On the y axis (index=1)
         float separation = this->center(1) / 2;
-        float width      = 1;
+        float width      = 0.5;
 
         float axis_first_band  = this->center(1) + separation / 2;
         float axis_second_band = this->center(1) - separation / 2;

@@ -22,8 +22,8 @@ df = pd.read_csv(f'{PATH}/particles.csv')
 # Create a figure with colorbar and 4 subplots
 fig, ax = plt.subplots(1, 4, figsize=(15, 4))
 
-fig.subplots_adjust(right=0.9)
-for i, frame in enumerate([1, 80, 160, 200]):
+fig.subplots_adjust()
+for i, frame in enumerate([1, 300, 600, 900]):
     initial_cong = df[df['time']==frame]
     scat = ax[i].scatter(
         initial_cong['pos_x'],
@@ -35,21 +35,21 @@ for i, frame in enumerate([1, 80, 160, 200]):
     ax[i].grid(True)
 
     # Delete x and y axis
-    ax[i].set_xlim((0,20))
-    ax[i].set_ylim((0,20))
+    ax[i].set_xlim((0,10))
+    ax[i].set_ylim((0,10))
     ax[i].set_title(f'Time: {frame}', loc='right')
 
     # Divide grid in 4
-    ax[i].set_xticks(np.arange(0, 20, 5))
-    ax[i].set_yticks(np.arange(0, 20, 5))
+    ax[i].set_xticks(np.arange(0, 10, 10/4))
+    ax[i].set_yticks(np.arange(0, 10, 10/4))
     ax[i].set_xticklabels([])
     ax[i].set_yticklabels([])
 
 
 # Add color bar with title
-cbar_ax = fig.add_axes([0.93, 0.1, 0.01, 0.8])
-cbar = fig.colorbar(scat, cax=cbar_ax)
-cbar.set_label('Vorticity', labelpad=15)
+# cbar_ax = fig.add_axes([0.93, 0.1, 0.01, 0.8])
+# cbar = fig.colorbar(scat, cax=cbar_ax)
+# cbar.set_label('Vorticity', labelpad=15)
 
-plt.tight_layout(h_pad=4, rect=[0, 0, 0.92, 1])
+plt.tight_layout(h_pad=4)#, rect=[0, 0, 0.92, 1])
 plt.savefig(f'{PATH}/4_frames.png')
