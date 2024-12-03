@@ -8,7 +8,7 @@ run-docker-container:
     - test 
   script:
     - echo "Starting build process for IPPL"
-    - pwd
-    - ls
-    - cd app 
-
+    - mkdir -p build                   
+    - cd build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -DENABLE_TESTS=True -DENABLE_FFT=ON -DENABLE_SOLVERS=ON -DENABLE_UNIT_TESTS=True -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_COVERAGE=ON -DKokkos_VERSION=4.2.00
+    - make
