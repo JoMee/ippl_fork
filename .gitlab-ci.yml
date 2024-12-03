@@ -1,0 +1,14 @@
+stages:
+  - run-container
+
+run-docker-container:
+  stage: run-container
+  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
+  tags: 
+    - test 
+  script:
+    - echo "Starting build process for IPPL"
+    - pwd
+    - ls
+    - cd app 
+
