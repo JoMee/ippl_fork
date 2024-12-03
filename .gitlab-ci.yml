@@ -1,14 +1,31 @@
 stages:
-  - run-container
+  - build
+  - test
 
-run-docker-container:
-  stage: run-container
+
+build-ippl:
+  stage: build
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
-  tags: 
-    - test 
+  tags:
+    - test
   script:
-    - echo "Starting build process for IPPL"
-    - mkdir -p build                   
-    - cd build
+    - echo "Building IPPL with tests enabled"
+    - mkdir -p build && cd build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -DENABLE_TESTS=True -DENABLE_FFT=ON -DENABLE_SOLVERS=ON -DENABLE_UNIT_TESTS=True -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_COVERAGE=OFF -DKokkos_VERSION=4.2.00
     - make
+  artifacts:
+    paths:
+      - build/
+
+run-tests:
+  stage: test
+  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
+  tags:
+    - test
+  dependencies:
+    - build-ippl
+  script:
+    - echo "Running tests"
+    - cd build
+    - ctest --output-on-failure
+
