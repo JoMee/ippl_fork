@@ -34,6 +34,31 @@ else ()
     message (STATUS "${Green}Build type is: ${CMAKE_BUILD_TYPE}${ColourReset}")
 endif()
 
+option(ENABLE_COVERAGE "Enable code coverage" OFF)
+
+if(ENABLE_COVERAGE AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
+    message(STATUS "${Yellow}Code coverage enabled.${ColourReset}")
+    add_compile_options(-fprofile-arcs -ftest-coverage -g)
+    add_link_options(-fprofile-arcs -ftest-coverage)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
+if (ENABLE_COVERAGE AND ENABLE_TESTS)
+    find_program(LCOV lcov)
+    find_program(GENHTML genhtml)
+    if (NOT LCOV OR NOT GENHTML)
+        message(FATAL_ERROR "lcov or genhtml not found. Please install them to enable coverage reports.")
+    endif()
+
+    add_custom_target(run_coverage
+        COMMAND ${CMAKE_CTEST_COMMAND}
+        COMMAND ${LCOV} --capture --directory . --output-file coverage.info
+        COMMAND ${LCOV} --remove coverage.info '/usr/*' --output-file coverage.cleaned.info
+        COMMAND ${GENHTML} coverage.cleaned.info --output-directory coverage_report
+        COMMENT "Running tests and generating coverage report"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_definitions (-DNOPAssert)
