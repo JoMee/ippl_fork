@@ -1,54 +1,24 @@
 stages:
-  - build
-  - test
-  - coverage
+  - test-and-coverage
 
 
-build-ippl:
-  stage: build
+# Builds IPPL with -O0 in debug mode with coverage metrics and runs tests. Only results are stored since those files can get very large
+test-and-coverage:
+  stage: test-and-coverage
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   tags:
     - test
   script:
-    - echo "Building IPPL with tests enabled"
+    - echo "Building IPPL with tests and coverage enabled"
     - /usr/local/bin/compile.sh
-  after_script:
-    - tar -czf artifacts.tar.gz build/
-  artifacts:
-    paths:
-      - artifacts.tar.gz 
-
-run-tests:
-  stage: test
-  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
-  tags:
-    - test
-  dependencies:
-    - build-ippl
-  script:
-    - echo "Extracting compressed artifacts"
-    - tar -xzf artifacts.tar.gz
     - echo "Running tests"
-    - cd build
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure
-  after_script:
-    - tar -czf artifacts.tar.gz build/
-  artifacts:
-    paths:
-      - artifacts.tar.gz 
-    expire_in: 1 week
 
-coverage:
-  stage: coverage
-  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
-  dependencies:
-    - run-tests
-  script:
-    - echo "Extracting compressed artifacts"
-    - tar -xzf artifacts.tar.gz
+    - cd build
+    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
     - /usr/local/bin/compile.sh
   artifacts:
     paths:
       - build/coverage_report
-    expire_in: 1 week
+      - build/tests
+
