@@ -33,4 +33,3 @@ pages:
   artifacts:
     paths:
       - public
-  when: manual
