@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - coverage
 
 
 build-ippl:
@@ -10,9 +11,7 @@ build-ippl:
     - test
   script:
     - echo "Building IPPL with tests enabled"
-    - mkdir -p build && cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -DENABLE_TESTS=True -DENABLE_FFT=ON -DENABLE_SOLVERS=ON -DENABLE_UNIT_TESTS=True -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_COVERAGE=OFF -DKokkos_VERSION=4.2.00
-    - make
+    - /usr/local/bin/compile.sh
   artifacts:
     paths:
       - build/
@@ -27,5 +26,20 @@ run-tests:
   script:
     - echo "Running tests"
     - cd build
-    - ctest --output-on-failure
+    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure
+  artifacts:
+    paths:
+      - build/  # Retain .gcda files for the coverage stage.
+    expire_in: 1 week
 
+coverage:
+  stage: coverage
+  dependencies:
+    - test
+  script:
+    - echo "Generage coverage report"
+    - /usr/local/bin/compile.sh
+  artifacts:
+    paths:
+      - build/coverage_report
+    expire_in: 1 week
