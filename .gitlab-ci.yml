@@ -22,7 +22,7 @@ run-tests:
   tags:
     - test
   dependencies:
-    - build-ippl
+    - build
   script:
     - echo "Running tests"
     - cd build
