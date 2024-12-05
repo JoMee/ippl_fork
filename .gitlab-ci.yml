@@ -12,9 +12,11 @@ build-ippl:
   script:
     - echo "Building IPPL with tests enabled"
     - /usr/local/bin/compile.sh
+  after_script:
+    - tar -czf artifacts.tar.gz build/
   artifacts:
     paths:
-      - build/
+      - artifacts.tar.gz 
 
 run-tests:
   stage: test
@@ -24,12 +26,16 @@ run-tests:
   dependencies:
     - build-ippl
   script:
+    - echo "Extracting compressed artifacts"
+    - tar -xzf artifacts.tar.gz
     - echo "Running tests"
     - cd build
     - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure
+  after_script:
+    - tar -czf artifacts.tar.gz build/
   artifacts:
     paths:
-      - build/  # Retain .gcda files for the coverage stage.
+      - artifacts.tar.gz 
     expire_in: 1 week
 
 coverage:
@@ -38,6 +44,8 @@ coverage:
   dependencies:
     - run-tests
   script:
+    - echo "Extracting compressed artifacts"
+    - tar -xzf artifacts.tar.gz
     - echo "Generage coverage report"
     - /usr/local/bin/compile.sh
   artifacts:
