@@ -36,7 +36,7 @@ coverage:
   stage: coverage
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   dependencies:
-    - run-test
+    - run-tests
   script:
     - echo "Generage coverage report"
     - /usr/local/bin/compile.sh
