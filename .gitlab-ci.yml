@@ -22,8 +22,8 @@ test-and-coverage:
     paths:
       - build/coverage_report
       - build/tests
-  reports:
-    junit: build/tests/test_results.xml
+    reports:
+      junit: build/tests/test_results.xml
 
 pages:
   stage: deploy
