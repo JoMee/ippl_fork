@@ -22,7 +22,7 @@ run-tests:
   tags:
     - test
   dependencies:
-    - build
+    - build-ippl
   script:
     - echo "Running tests"
     - cd build
@@ -34,8 +34,9 @@ run-tests:
 
 coverage:
   stage: coverage
+  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   dependencies:
-    - test
+    - run-test
   script:
     - echo "Generage coverage report"
     - /usr/local/bin/compile.sh
