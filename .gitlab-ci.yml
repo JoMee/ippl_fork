@@ -1,5 +1,6 @@
 stages:
   - test-and-coverage
+  - deploy
 
 
 # Builds IPPL with -O0 in debug mode with coverage metrics and runs tests. Only results are stored since those files can get very large
@@ -22,3 +23,14 @@ test-and-coverage:
       - build/coverage_report
       - build/tests
 
+pages:
+  stage: deploy
+  dependencies:
+    - test-and-coverage
+  script:
+    - mkdir -p public
+    - cp -r build/coverage_report/* public/
+  artifacts:
+    paths:
+      - public
+  when: manual
