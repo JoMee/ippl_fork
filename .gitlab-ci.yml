@@ -2,7 +2,6 @@ stages:
   - test-and-coverage
   - deploy
 
-
 # Builds IPPL with -O0 in debug mode with coverage metrics and runs tests. Only results are stored since those files can get very large
 test-and-coverage:
   stage: test-and-coverage
