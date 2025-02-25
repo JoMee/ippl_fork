@@ -23,9 +23,7 @@ test-and-coverage:
 
     # Move coverage report into the structured folder
     - mv coverage_report ../$TEST_RUN_FOLDER/coverage
-
-    # Generate metadata JSON file for indexing
-    - echo "{\"run_id\": \"$TEST_RUN_FOLDER\", \"timestamp\": \"$(date --iso-8601=seconds)\", \"commit\": \"$(git rev-parse --short HEAD)\", \"branch\": \"${CI_COMMIT_REF_NAME}\"}" > ../$TEST_RUN_FOLDER/metadata.json
+    
   artifacts:
     paths:
       - $TEST_RUN_FOLDER
