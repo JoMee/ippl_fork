@@ -22,6 +22,8 @@ test-and-coverage:
 
     - ls
     - ls ..
+    - ls /
+    - ls /public
     - ls public
     - ls public/test-runs
     - | 
