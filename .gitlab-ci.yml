@@ -15,6 +15,7 @@ test-and-coverage:
     - /usr/local/bin/compile.sh
     - echo "Running tests"
 
+
     - mkdir -p $TEST_RUN_FOLDER
     - cd build
     - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit ../$TEST_RUN_FOLDER/test_results.xml
