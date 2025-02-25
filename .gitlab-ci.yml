@@ -20,10 +20,13 @@ test-and-coverage:
     #- /usr/local/bin/coverage_report.sh
     - mkdir coverage_report
 
+    - ls
+    - ls public
+    - ls public/test-runs
     - | 
       TEST_RUN_FOLDER="test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
-      mv coverage_report "public/test-runs/$TEST_RUN_FOLDER/coverage"
+      mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
 
 
   artifacts:
