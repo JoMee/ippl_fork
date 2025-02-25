@@ -82,3 +82,6 @@ pages:
   artifacts:
     paths:
       - public
+
+  variables:
+    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
