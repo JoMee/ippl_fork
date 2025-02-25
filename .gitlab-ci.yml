@@ -63,6 +63,8 @@ pages:
 
     # DEBUG: Check if the token is available (DO NOT ECHO THE TOKEN ITSELF)
     - echo "GitLab CI/CD Variables Loaded"
+    - echo "Checking if token is loaded: ${GITLAB_ACCESS_TOKEN:+Token found}"
+
 
     # Authenticate with the stored GitLab PAT
     - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
