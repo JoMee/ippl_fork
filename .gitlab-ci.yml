@@ -2,6 +2,12 @@ stages:
   - test-and-coverage
   - deploy
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "gitlab-pages"
+      when: never  # Do not trigger pipelines when pushing to gitlab-pages
+    - when: always  # Otherwise, run normally
+
 # Builds IPPL with -O0 in debug mode with coverage metrics and runs tests. Only results are stored since those files can get very large
 test-and-coverage:
   stage: test-and-coverage
@@ -70,7 +76,7 @@ pages:
     # Commit and push changes
     - git add public/
     - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
-    - git push origin gitlab-pages [skip ci]
+    - git push origin gitlab-pages
   artifacts:
     paths:
       - public
