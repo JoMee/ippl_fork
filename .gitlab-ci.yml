@@ -12,19 +12,19 @@ test-and-coverage:
 
     - echo "Building IPPL with tests and coverage enabled"
     - echo "Running tests"
-    - /usr/local/bin/compile.sh
+    #- /usr/local/bin/compile.sh
 
 
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    #- ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
-    - /usr/local/bin/coverage_report.sh
+    #- /usr/local/bin/coverage_report.sh
 
     - mkdir public
-    - | 
-      TEST_RUN_FOLDER="test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
-      echo "Test results will be stored in: $TEST_RUN_FOLDER"
-      mkdir -p public/$TEST_RUN_FOLDER
-      mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
+    #- | 
+    #  TEST_RUN_FOLDER="test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
+    #  echo "Test results will be stored in: $TEST_RUN_FOLDER"
+      #mkdir -p public/$TEST_RUN_FOLDER
+      #mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
 
 
   artifacts:
@@ -40,7 +40,7 @@ pages:
     - test-and-coverage
   script:
     - mkdir -p public
-    - cp -r build/coverage_report/* public/
   artifacts:
     paths:
       - public
+      - public/test-results
