@@ -54,14 +54,21 @@ pages:
     - test-and-coverage
   image: debian:latest  # Using a lightweight image that includes basic tools
   script:
-    - apt update && apt install -y git  # Install Git if missing
+    # Install Git if missing
+    - apt update && apt install -y git
+
+    # Configure Git identity
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
+
+    # DEBUG: Check if the token is available (DO NOT ECHO THE TOKEN ITSELF)
+    - echo "GitLab CI/CD Variables Loaded"
+
+    # Authenticate with the stored GitLab PAT
     - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
 
-    - echo ${GITLAB_ACCESS_TOKEN}
-
-    # Fetch the latest version of the `gitlab-pages` branch (or create it)
+    # DEBUG: Check authentication
+    - git remote -v  # Ensure the correct remote is set
     - git fetch origin gitlab-pages || echo "No existing gitlab-pages branch"
     - git checkout gitlab-pages || git checkout --orphan gitlab-pages
 
@@ -71,14 +78,16 @@ pages:
     # Move test runs into public/test-runs/
     - mv public/tmp-test-runs/* public/test-runs/ || echo "No new test runs to merge"
 
-    # Debug: Show public/ contents before committing
+    # Debugging: Show public/ contents before committing
     - echo "Final contents of public before deployment:"
     - ls -R public/
 
-    # Commit and push changes
+    # Commit and push changes (Prevent infinite loop with [skip ci])
     - git add public/
-    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
-    - git push origin gitlab-pages
+    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID}) [skip ci]"
+
+    # DEBUG: Attempt push and capture error messages
+    - GIT_TRACE=1 GIT_CURL_VERBOSE=1 git push origin gitlab-pages
   artifacts:
     paths:
       - public
