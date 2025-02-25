@@ -60,10 +60,13 @@ pages:
     # Configure Git identity
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
+    - printenv
+
+    - env
 
     # DEBUG: Check if the token is available (DO NOT ECHO THE TOKEN ITSELF)
     - |
-      if [ -n "${CI_GITLAB_ACCESS_TOKEN}" ]; then
+      if [ -n "${GITLAB_ACCESS_TOKEN}" ]; then
         echo "Token is loaded correctly."
       else
         echo "Token is NOT loaded. Check CI/CD Variables."
@@ -71,7 +74,7 @@ pages:
       fi
 
     # Authenticate with the stored GitLab PAT
-    - git remote set-url origin "https://oauth2:${CI_GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
+    - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
 
     # DEBUG: Check authentication
     - git remote -v  # Ensure the correct remote is set
@@ -97,6 +100,5 @@ pages:
   artifacts:
     paths:
       - public
-
   variables:
     GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
