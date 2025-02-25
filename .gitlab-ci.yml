@@ -51,7 +51,7 @@ pages:
     - apt update && apt install -y git  # Install Git if missing
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
-    - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@jsc.fz-juelich.de/muralikrishnan1/ippl.git"
+    - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
 
     # Fetch the latest version of the `gitlab-pages` branch (or create it)
     - git fetch origin gitlab-pages || echo "No existing gitlab-pages branch"
