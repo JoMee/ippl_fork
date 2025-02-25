@@ -40,6 +40,8 @@ pages:
     - test-and-coverage
   script:
     - mkdir -p public
+    - mkdir -p public/test-results
+    - touch public/test-results/index.html
   artifacts:
     paths:
       - public
