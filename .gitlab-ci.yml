@@ -21,6 +21,7 @@ test-and-coverage:
     - mkdir coverage_report
 
     - ls
+    - ls ..
     - ls public
     - ls public/test-runs
     - | 
