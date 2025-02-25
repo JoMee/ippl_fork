@@ -20,9 +20,13 @@ test-and-coverage:
     - echo "Running tests"
     - /usr/local/bin/compile.sh
 
+    - cd build
 
     - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
+
+    - cd ..
+
     - /usr/local/bin/coverage_report.sh
 
 
