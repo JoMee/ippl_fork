@@ -70,7 +70,7 @@ pages:
     # Commit and push changes
     - git add public/
     - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
-    - git push origin gitlab-pages
+    - git push origin gitlab-pages [skip ci]
   artifacts:
     paths:
       - public
