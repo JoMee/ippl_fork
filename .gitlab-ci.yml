@@ -15,17 +15,21 @@ test-and-coverage:
     - /usr/local/bin/compile.sh
     - echo "Running tests"
 
-    - mkdir -p $TEST_RUN_FOLDER
+    # Define the test run folder with correct variable expansion
+    - TEST_RUN_FOLDER="test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
+    - echo "Test results will be stored in: $TEST_RUN_FOLDER"
+
+    # Create the directory
+    - mkdir -p "$TEST_RUN_FOLDER"
+
     - cd build
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit ../$TEST_RUN_FOLDER/test_results.xml
+    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit "../$TEST_RUN_FOLDER/test_results.xml"
     - echo "Generate coverage report"
     - /usr/local/bin/coverage_report.sh
 
     # Move coverage report into the structured folder
-    - mv coverage_report ../$TEST_RUN_FOLDER/coverage
+    - mv coverage_report "../$TEST_RUN_FOLDER/coverage"
 
-    # Generate metadata JSON file for indexing
-    - echo "{\"run_id\": \"$TEST_RUN_FOLDER\", \"timestamp\": \"$(date --iso-8601=seconds)\", \"commit\": \"$(git rev-parse --short HEAD)\", \"branch\": \"${CI_COMMIT_REF_NAME}\"}" > ../$TEST_RUN_FOLDER/metadata.json
   artifacts:
     paths:
       - $TEST_RUN_FOLDER
