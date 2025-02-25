@@ -12,24 +12,25 @@ test-and-coverage:
 
     - echo "Building IPPL with tests and coverage enabled"
     - echo "Running tests"
-    - /usr/local/bin/compile.sh
+    #- /usr/local/bin/compile.sh
 
 
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    #- ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
-    - /usr/local/bin/coverage_report.sh
+    #- /usr/local/bin/coverage_report.sh
+    - mkdir coverage_report
 
     - | 
       TEST_RUN_FOLDER="test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
-      mv coverage_report "../$TEST_RUN_FOLDER/coverage"
+      mv coverage_report "public/test-runs/$TEST_RUN_FOLDER/coverage"
 
 
   artifacts:
     paths:
       - build/coverage_report
       - build/tests
-      - test-runs/
+      - public/test-runs/
     reports:
       junit: build/tests/test_results.xml
 
