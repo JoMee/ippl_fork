@@ -60,8 +60,7 @@ pages:
     # Configure Git identity
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
-    - printenv
-
+    
     - env
 
     # DEBUG: Check if the token is available (DO NOT ECHO THE TOKEN ITSELF)
