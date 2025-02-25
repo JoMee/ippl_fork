@@ -39,10 +39,8 @@ pages:
   dependencies:
     - test-and-coverage
   script:
-    - mkdir -p public
     - mkdir -p public/test-results
-    - touch public/test-results/index.html
+    - echo "<h1>Test Results Index</h1>" > public/test-results/index.html
   artifacts:
     paths:
       - public
-      - public/test-results
