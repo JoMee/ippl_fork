@@ -11,6 +11,7 @@ test-and-coverage:
   variables:
     TEST_RUN_FOLDER: "test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
   script:
+
     - echo "Building IPPL with tests and coverage enabled"
     - /usr/local/bin/compile.sh
     - echo "Running tests"
