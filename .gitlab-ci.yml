@@ -18,27 +18,27 @@ test-and-coverage:
 
     - echo "Building IPPL with tests and coverage enabled"
     - echo "Running tests"
-    #- /usr/local/bin/compile.sh
+    - /usr/local/bin/compile.sh
 
 
-    #- ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
-    #- /usr/local/bin/coverage_report.sh
+    - /usr/local/bin/coverage_report.sh
 
 
-    - |
-      TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
-      echo "Test results will be stored in: $TEST_RUN_FOLDER"
-      mkdir -p "public/$TEST_RUN_FOLDER"
-      echo "<h1>Test Run</h1><p>Dummy test result page</p>" > "public/$TEST_RUN_FOLDER/index.html"
-
-
-    #- mkdir public
-    #- | 
+    #- |
     #  TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
     #  echo "Test results will be stored in: $TEST_RUN_FOLDER"
-    #  mkdir -p public/$TEST_RUN_FOLDER
-    #  mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
+    #  mkdir -p "public/$TEST_RUN_FOLDER"
+    #  echo "<h1>Test Run</h1><p>Dummy test result page</p>" > "public/$TEST_RUN_FOLDER/index.html"
+
+
+    - mkdir public
+    - | 
+      TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
+      echo "Test results will be stored in: $TEST_RUN_FOLDER"
+      mkdir -p public/$TEST_RUN_FOLDER
+      mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
 
 
   artifacts:
@@ -92,10 +92,10 @@ pages:
 
     # Commit and push changes (Prevent infinite loop with [skip ci])
     - git add public/
-    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID}) [skip ci]"
+    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
 
     # DEBUG: Attempt push and capture error messages
-    - GIT_TRACE=1 GIT_CURL_VERBOSE=1 git push origin gitlab-pages
+    - git push origin gitlab-pages
   artifacts:
     paths:
       - public
