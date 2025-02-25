@@ -12,13 +12,12 @@ test-and-coverage:
 
     - echo "Building IPPL with tests and coverage enabled"
     - echo "Running tests"
-    #- /usr/local/bin/compile.sh
+    - /usr/local/bin/compile.sh
 
 
-    #- ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
-    #- /usr/local/bin/coverage_report.sh
-    - mkdir coverage_report
+    - /usr/local/bin/coverage_report.sh
 
     - mkdir public
     - | 
@@ -30,8 +29,6 @@ test-and-coverage:
 
   artifacts:
     paths:
-      - build/coverage_report
-      - build/tests
       - public/test-runs/
     reports:
       junit: build/tests/test_results.xml
