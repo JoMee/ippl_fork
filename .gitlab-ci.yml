@@ -50,6 +50,8 @@ pages:
   dependencies:
     - test-and-coverage
   image: debian:latest  # Maybe build my own at some point to avoid dependency (then one doesn't always need to install git either)
+  tags:
+    - test
   script:
     # Install Git if missing
     - apt update && apt install -y git
