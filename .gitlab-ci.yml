@@ -65,6 +65,9 @@ pages:
     # Authenticate with the stored GitLab PAT
     - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
 
+    - git fetch origin gitlab-pages || echo "gitlab-pages branch does not exist yet"
+    - git checkout gitlab-pages || git checkout -b gitlab-pages
+
     # Ensure public/test-runs/ exists
     - mkdir -p public/test-runs
 
