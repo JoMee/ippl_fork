@@ -68,6 +68,8 @@ pages:
     - git fetch origin gitlab-pages || echo "gitlab-pages branch does not exist yet"
     - git checkout gitlab-pages || git checkout -b gitlab-pages
 
+    - git merge origin/gitlab-pages --no-edit || echo "Nothing to merge"
+
     # Ensure public/test-runs/ exists
     - mkdir -p public/test-runs
 
