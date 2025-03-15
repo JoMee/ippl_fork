@@ -49,6 +49,9 @@ test-and-coverage:
 
 debug-info:
   stage: debug-info
+  id_tokens:
+    SITE_ID_TOKEN:
+      aud: "https://gitlab.jsc.fz-juelich.de"
   tags:
     - jedi
     - login
