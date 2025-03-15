@@ -57,10 +57,7 @@ debug-info:
     - login
   script:
     - echo "Listing all available folders and files:"
-    - ls -lahR /
-
     - ls -la .
-    
     - echo "Creating a test file for artifact upload"
     - echo "This is a debug artifact" > debug-info.txt
 
