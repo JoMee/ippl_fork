@@ -1,4 +1,5 @@
 stages:
+  - debug-info
   - test-and-coverage
   - deploy
 
@@ -43,6 +44,27 @@ test-and-coverage:
       - public/tmp-test-runs/
     reports:
       junit: build/tests/test_results.xml
+
+
+
+debug-info:
+  stage: debug-info
+  tags:
+    - jedi
+    - login
+  script:
+    - echo "Listing all available folders and files:"
+    - ls -lahR /
+
+    - ls -la .
+    
+    - echo "Creating a test file for artifact upload"
+    - echo "This is a debug artifact" > debug-info.txt
+
+  artifacts:
+    paths:
+      - debug-info.txt
+    expire_in: 1 day
 
 
 pages:
