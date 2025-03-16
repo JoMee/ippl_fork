@@ -1,0 +1,8 @@
+dummy_cluster:
+  extends: .test_template
+  tags:
+    - jedi 
+    - login
+  script:
+    - echo "Executing dummy test..."
+    - echo "Dummy test log entry" > "${RESULTS_DIR}/dummy_test.log"

@@ -36,6 +36,8 @@ pages:
     - git add public/
     - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
 
+    - git status
+
     # DEBUG: Attempt push and capture error messages
     - git push origin gitlab-pages
   artifacts:
