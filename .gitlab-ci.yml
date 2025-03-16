@@ -6,12 +6,10 @@ stages:
 # Add tests in ci/tests/<test-name>.yml and include here
 include:
   - local: 'ci/tests/serial_unit.yml'
+  - local: 'ci/deploy/deploy.yml'
 
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "gitlab-pages"
       when: never   # Do not trigger pipelines when pushing to gitlab-pages
     - when: always  # Otherwise, run normally
-
-include:
-  - local: 'ci/deploy/deploy.yml'

@@ -1,8 +1,6 @@
 
 pages:
   stage: deploy
-  dependencies:
-    - test
   image: debian:latest  # Maybe build my own at some point to avoid dependency (then one doesn't always need to install git either)
   tags:
     - test
