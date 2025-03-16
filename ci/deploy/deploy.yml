@@ -34,7 +34,6 @@ pages:
 
     # Commit and push changes
     - git add public/
-    - git status
     - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
 
     # DEBUG: Attempt push and capture error messages

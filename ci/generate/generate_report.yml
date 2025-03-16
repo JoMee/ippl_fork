@@ -1,47 +1,9 @@
-
-pages:
-  stage: deploy
-  dependencies:
-    - test
-  image: debian:latest  # Maybe build my own at some point to avoid dependency (then one doesn't always need to install git either)
-  tags:
-    - test
+debug_results:
+  stage: debug
   script:
-    # Install Git if missing
-    - apt update && apt install -y git
-
-    # Configure Git identity
-    - git config --global user.email "gitlab-ci@localhost"
-    - git config --global user.name "GitLab CI"
-    
-    - env
-
-    # Authenticate with the stored GitLab PAT
-    - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
-
-    - git fetch origin gitlab-pages || echo "gitlab-pages branch does not exist yet"
-    - git checkout gitlab-pages || git checkout -b gitlab-pages
-
-    - git merge origin/gitlab-pages --no-edit || echo "Nothing to merge"
-
-    # Ensure public/test-runs/ exists
-    - mkdir -p public/test-runs
-
-    # Move test runs into public/test-runs/
-    - mv public/tmp-test-runs/* public/test-runs/ || echo "No new test runs to merge"
-
-    # Debugging: Show public/ contents before committing
-    - echo "Final contents of public before deployment:"
-    - ls -R public/
-
-    # Commit and push changes
-    - git add public/
-    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
-
-    # DEBUG: Attempt push and capture error messages
-    - git push origin gitlab-pages
-  artifacts:
-    paths:
-      - public
-  variables:
-    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
+    - echo "Debugging results directory..."
+    - ls -la $CI_PROJECT_DIR/results/
+    - echo "Checking per-job result directories..."
+    - find $CI_PROJECT_DIR/results/ -type d -exec echo "Found directory: {}" \;
+    - find $CI_PROJECT_DIR/results/ -type f -exec echo "Found file: {}" \;
+  allow_failure: true  

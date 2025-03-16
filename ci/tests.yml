@@ -3,6 +3,7 @@ include:
   # - local: 'tests/serial_unit.yml'
   - local: 'ci/tests/dummy_test.yml'
   - local: 'ci/tests/dummy_cluster.yml'
+  - local: 'ci/generate/generate_report.yml'
 
 .test_template:
   variables:
