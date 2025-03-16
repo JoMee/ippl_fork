@@ -1,7 +1,7 @@
 # Add tests in tests/<test-name>.yml and include here
 include:
   # - local: 'tests/serial_unit.yml'
-  - local: 'tests/dummy_test.yml'
+  - local: './tests/dummy_test.yml'
 
 .test_template:
   variables:
