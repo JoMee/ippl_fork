@@ -6,3 +6,5 @@ dummy_cluster:
   script:
     - echo "Executing dummy test..."
     - echo "Dummy test log entry" > "${RESULTS_DIR}/dummy_test.log"
+  variables:
+    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
