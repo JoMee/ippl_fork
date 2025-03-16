@@ -4,6 +4,4 @@ debug_results:
     - echo "Debugging results directory..."
     - ls -la $CI_PROJECT_DIR/results/
     - echo "Checking per-job result directories..."
-    - find $CI_PROJECT_DIR/results/ -type d -exec echo "Found directory: {}" \;
-    - find $CI_PROJECT_DIR/results/ -type f -exec echo "Found file: {}" \;
   allow_failure: true  
