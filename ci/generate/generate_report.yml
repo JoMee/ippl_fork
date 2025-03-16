@@ -1,5 +1,8 @@
 debug_results:
   stage: debug
+  tags:
+    - test
+  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   script:
     - echo "Debugging results directory..."
     - ls -la $CI_PROJECT_DIR/results/
