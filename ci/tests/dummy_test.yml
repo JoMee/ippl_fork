@@ -1,0 +1,5 @@
+dummy_test:
+  extends: .test_template
+  script:
+    - echo "Executing dummy test..."
+    - echo "Dummy test log entry" > "${RESULTS_DIR}/dummy_test.log"
