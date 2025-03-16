@@ -1,93 +1,17 @@
 stages:
-  - test-and-coverage
+  - test
+  - generate
   - deploy
 
+# Add tests in ci/tests/<test-name>.yml and include here
+include:
+  - local: 'ci/tests/serial_unit.yml'
 
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "gitlab-pages"
-      when: never  # Do not trigger pipelines when pushing to gitlab-pages
+      when: never   # Do not trigger pipelines when pushing to gitlab-pages
     - when: always  # Otherwise, run normally
 
-# Builds IPPL with -O0 in debug mode with coverage metrics and runs tests. Only results are stored since those files can get very large
-test-and-coverage:
-  stage: test-and-coverage
-  image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
-  tags:
-    - test
-  script:
-
-    - echo "Building IPPL with tests and coverage enabled"
-    - echo "Running tests"
-    - /usr/local/bin/compile.sh
-
-    - cd build
-
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
-    - echo "Generage coverage report"
-
-    - cd ..
-
-    - /usr/local/bin/coverage_report.sh
-
-    - mkdir public
-    - | 
-      TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
-      echo "Test results will be stored in: $TEST_RUN_FOLDER"
-      mkdir -p public/$TEST_RUN_FOLDER
-      mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
-
-
-  artifacts:
-    paths:
-      - public/tmp-test-runs/
-    reports:
-      junit: build/tests/test_results.xml
-
-
-pages:
-  stage: deploy
-  dependencies:
-    - test-and-coverage
-  image: debian:latest  # Maybe build my own at some point to avoid dependency (then one doesn't always need to install git either)
-  tags:
-    - test
-  script:
-    # Install Git if missing
-    - apt update && apt install -y git
-
-    # Configure Git identity
-    - git config --global user.email "gitlab-ci@localhost"
-    - git config --global user.name "GitLab CI"
-    
-    - env
-
-    # Authenticate with the stored GitLab PAT
-    - git remote set-url origin "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.jsc.fz-juelich.de/muralikrishnan1/ippl.git"
-
-    - git fetch origin gitlab-pages || echo "gitlab-pages branch does not exist yet"
-    - git checkout gitlab-pages || git checkout -b gitlab-pages
-
-    - git merge origin/gitlab-pages --no-edit || echo "Nothing to merge"
-
-    # Ensure public/test-runs/ exists
-    - mkdir -p public/test-runs
-
-    # Move test runs into public/test-runs/
-    - mv public/tmp-test-runs/* public/test-runs/ || echo "No new test runs to merge"
-
-    # Debugging: Show public/ contents before committing
-    - echo "Final contents of public before deployment:"
-    - ls -R public/
-
-    # Commit and push changes
-    - git add public/
-    - git commit -m "Update GitLab Pages with new test results (Pipeline ${CI_PIPELINE_ID})"
-
-    # DEBUG: Attempt push and capture error messages
-    - git push origin gitlab-pages
-  artifacts:
-    paths:
-      - public
-  variables:
-    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
+include:
+  - local: 'ci/deploy/deploy.yml'
