@@ -7,6 +7,7 @@ include:
 .test_template:
   variables:
     RESULTS_DIR: "$CI_PROJECT_DIR/results/${CI_JOB_ID}"  # Unique directory per job
+    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
 
   before_script:
     - mkdir -p "${RESULTS_DIR}"  # Create results directory
@@ -18,3 +19,6 @@ include:
     paths:
       - results/${CI_JOB_ID}/
     expire_in: 1 week
+  id_tokens:
+    SITE_ID_TOKEN:
+      aud: https://gitlab.jsc.fz-juelich.de
