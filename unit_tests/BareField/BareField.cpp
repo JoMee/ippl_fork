@@ -86,7 +86,7 @@ struct VFieldVal {
     }
 };
 using Tests = TestParams::tests<1, 2, 3, 4, 5, 6>;
-TYPED_TEST_CASE(BareFieldTest, Tests);
+TYPED_TEST_SUITE(BareFieldTest, Tests);
 
 TYPED_TEST(BareFieldTest, DeepCopy) {
     auto& field = this->field;
