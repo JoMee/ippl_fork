@@ -24,7 +24,7 @@ function(add_ippl_test TEST_NAME)
         DISCOVERY_MODE PRE_TEST
         PROPERTIES
             TIMEOUT 600
-            LABELS "${TEST_NAME};unit" 
+            LABELS "${TEST_NAME} unit" 
     )
 endfunction()
 

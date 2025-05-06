@@ -11,7 +11,7 @@ serial-unit-tests-and-coverage:
 
     - cd build
 
-    - ASAN_OPTIONS="detect_leaks=0" ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - ASAN_OPTIONS="detect_leaks=0" ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
     - echo "Generage coverage report"
 
     - cd ..
