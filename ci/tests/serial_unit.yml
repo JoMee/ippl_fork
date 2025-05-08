@@ -26,5 +26,6 @@ serial-unit-tests-and-coverage:
       mkdir -p public/$TEST_RUN_FOLDER
       mv coverage_report "${RESULTS_DIR}/coverage"  
       mv build/tests "${RESULTS_DIR}/gcc-xml"
+  artifacts:
     reports:
       junit: build/tests/test_results.xml
