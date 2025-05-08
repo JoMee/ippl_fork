@@ -20,10 +20,11 @@ serial-unit-tests-and-coverage:
 
     - mkdir public
     - | 
-      TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d_%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
+      TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d:%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
       mkdir -p public/$TEST_RUN_FOLDER
       mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
+      mv tests "public/$TEST_RUN_FOLDER/gcc-xml"
   artifacts:
     paths:
       - public/tmp-test-runs/
