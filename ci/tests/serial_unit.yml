@@ -26,7 +26,7 @@ serial-unit-tests-and-coverage:
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
       mkdir -p public/$TEST_RUN_FOLDER
       mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
-      mv tests "public/$TEST_RUN_FOLDER/gcc-xml"
+      mv build/tests "public/$TEST_RUN_FOLDER/gcc-xml"
   artifacts:
     paths:
       - public/tmp-test-runs/
