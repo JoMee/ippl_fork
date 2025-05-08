@@ -18,6 +18,8 @@ serial-unit-tests-and-coverage:
 
     - /usr/local/bin/coverage_report.sh
 
+    - ls -a
+
     - mkdir public
     - | 
       TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d:%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
