@@ -1,4 +1,5 @@
 serial-unit-tests-and-coverage:
+  extends: .test_template
   stage: test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   tags:
@@ -18,17 +19,12 @@ serial-unit-tests-and-coverage:
 
     - /usr/local/bin/coverage_report.sh
 
-    - ls -a
-
     - mkdir public
     - | 
       TEST_RUN_FOLDER="tmp-test-runs/$(date +%Y-%m-%d:%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
       mkdir -p public/$TEST_RUN_FOLDER
-      mv coverage_report "public/$TEST_RUN_FOLDER/coverage"
-      mv build/tests "public/$TEST_RUN_FOLDER/gcc-xml"
-  artifacts:
-    paths:
-      - public/tmp-test-runs/
+      mv coverage_report "${RESULTS_DIR}/coverage"  
+      mv build/tests "${RESULTS_DIR}/gcc-xml"
     reports:
       junit: build/tests/test_results.xml
