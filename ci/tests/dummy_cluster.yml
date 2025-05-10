@@ -27,6 +27,7 @@ dummy_cluster:
       -DIPPL_ENABLE_SOLVERS=ON \
       -DIPPL_ENABLE_ALPINE=True \
       -DIPPL_PLATFORMS=cuda
+    - make -j20
 
     - cd ..
     - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
