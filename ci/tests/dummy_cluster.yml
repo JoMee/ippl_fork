@@ -22,10 +22,9 @@ dummy_cluster:
       -DKokkos_ARCH_HOPPER90=ON \
       -DCMAKE_CXX_STANDARD=20 \
       -DIPPL_ENABLE_FFT=ON \
-      -DIPPL_ENABLE_TESTS=ON \
+      -DIPPL_ENABLE_UNIT_TESTS=ON \
       -DUSE_ALTERNATIVE_VARIANT=ON \
       -DIPPL_ENABLE_SOLVERS=ON \
-      -DIPPL_ENABLE_ALPINE=True \
       -DIPPL_PLATFORMS=cuda
     - make -j20
     - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
