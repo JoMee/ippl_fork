@@ -17,16 +17,16 @@ dummy_cluster:
 
     - cd build
     - | 
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DKokkos_ARCH_HOPPER90=ON \
-    -DCMAKE_CXX_STANDARD=20 \
-    -DIPPL_ENABLE_FFT=ON \
-    -DIPPL_ENABLE_TESTS=ON \
-    -DUSE_ALTERNATIVE_VARIANT=ON \
-    -DIPPL_ENABLE_SOLVERS=ON \
-    -DIPPL_ENABLE_ALPINE=True \
-    -DIPPL_PLATFORMS=cuda
+      cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DKokkos_ARCH_HOPPER90=ON \
+      -DCMAKE_CXX_STANDARD=20 \
+      -DIPPL_ENABLE_FFT=ON \
+      -DIPPL_ENABLE_TESTS=ON \
+      -DUSE_ALTERNATIVE_VARIANT=ON \
+      -DIPPL_ENABLE_SOLVERS=ON \
+      -DIPPL_ENABLE_ALPINE=True \
+      -DIPPL_PLATFORMS=cuda
 
     - cd ..
     - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
