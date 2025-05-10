@@ -28,11 +28,9 @@ dummy_cluster:
       -DIPPL_ENABLE_ALPINE=True \
       -DIPPL_PLATFORMS=cuda
     - make -j20
-
-    - cd ..
     - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
-
-    - mv tests/test_results.xml ${RESULTS_DIR} 
+    - cd ..
+    - mv build/tests/test_results.xml ${RESULTS_DIR} 
     
   variables:
     GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
