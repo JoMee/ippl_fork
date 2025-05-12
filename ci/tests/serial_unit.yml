@@ -23,4 +23,4 @@ serial-unit-tests-and-coverage:
     mv build/tests "${RESULTS_DIR}/gcc-xml"
 
     mkdir -p "${CI_PIPELINE_ID}/coverage"
-    mv coverage_report "public/${CI_PIPELINE_ID}/coverage"
+    mv coverage_report "${CI_PIPELINE_ID}/coverage"
