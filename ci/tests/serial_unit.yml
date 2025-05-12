@@ -23,5 +23,5 @@ serial-unit-tests-and-coverage:
       TEST_RUN_FOLDER="${RESULTS_DIR}/$(date +%Y-%m-%d:%H-%M-%S)_commit-$(git rev-parse --short HEAD)_branch-${CI_COMMIT_REF_NAME}"
       echo "Test results will be stored in: $TEST_RUN_FOLDER"
       mkdir -p public/$TEST_RUN_FOLDER
-      mv coverage_report "${TEST_RUN_FOLDER}/coverage"  
+      mv coverage_report "${TEST_RUN_FOLDER}/"  
       mv build/tests "${TEST_RUN_FOLDER}/gcc-xml"
