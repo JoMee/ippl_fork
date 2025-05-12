@@ -12,6 +12,7 @@ include:
     GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
 
   before_script:
+    - rm -rf "${RESULTS_DIR}" # remove potential artifacts from previous runs
     - mkdir -p "${RESULTS_DIR}"  # Create results directory
     - echo "Writing results to ${RESULTS_DIR}"  
 
@@ -19,7 +20,7 @@ include:
     - ls -la "${RESULTS_DIR}"  # Debug: Ensure artifacts exist
   artifacts:
     paths:
-      - results/${CI_JOB_ID}/
+      - results/${CI_PIPELINE_ID}/
     expire_in: 1 week
   id_tokens: # needed for jacamar
     SITE_ID_TOKEN: 
