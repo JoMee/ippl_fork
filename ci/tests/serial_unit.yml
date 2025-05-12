@@ -5,7 +5,6 @@ serial-unit-tests-and-coverage:
   tags:
     - test
   script:
-
     - echo "Building IPPL with tests and coverage enabled"
     - echo "Running tests"
     - /usr/local/bin/compile.sh

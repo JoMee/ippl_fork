@@ -26,10 +26,8 @@ dummy_cluster:
       -DUSE_ALTERNATIVE_VARIANT=ON \
       -DIPPL_ENABLE_SOLVERS=ON \
       -DIPPL_PLATFORMS=cuda
-    - make -j20
-    - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
+
+    - make -j 20
     - cd ..
-    - mv build/tests/test_results.xml ${RESULTS_DIR} 
-    
-  variables:
-    GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
+    - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - mv build/tests/test_results.xml "${RESULTS_DIR}/gcc-xml" 
