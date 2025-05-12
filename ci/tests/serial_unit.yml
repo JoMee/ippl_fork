@@ -18,9 +18,9 @@ serial-unit-tests-and-coverage:
 
     /usr/local/bin/coverage_report.sh
 
-    mkdir -p public/$TEST_RUN_FOLDER/gcc-xml
-    echo "Test results will be stored in: $TEST_RUN_FOLDER/gcc-xml"
-    mv build/tests "${TEST_RUN_FOLDER}/gcc-xml"
+    mkdir -p "public/${RESULTS_DIR}/gcc-xml"
+    echo "Test results will be stored in: $RESULTS_DIR/gcc-xml"
+    mv build/tests "${RESULTS_DIR}/gcc-xml"
 
     mkdir -p "public/${CI_PIPELINE_ID}/coverage"
     mv coverage_report "public/${CI_PIPELINE_ID}/coverage"
