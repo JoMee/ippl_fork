@@ -8,7 +8,7 @@ include:
 # Template for tests
 .test_template:
   variables:
-    RESULTS_DIR: "$CI_PROJECT_DIR/results/${CI_JOB_ID}"  # Unique directory per job
+    RESULTS_DIR: "$CI_PROJECT_DIR/results/${CI_PIPELINE_ID}/jobs/${CI_JOB_ID}"  # Unique directory per job
     GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
 
   before_script:
