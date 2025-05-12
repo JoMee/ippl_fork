@@ -22,5 +22,6 @@ serial-unit-tests-and-coverage:
     echo "Test results will be stored in: ${RESULTS_DIR}/gcc-xml"
     mv build/tests "${RESULTS_DIR}/gcc-xml"
 
-    mkdir -p "${CI_PIPELINE_ID}/coverage"
-    mv coverage_report "${CI_PIPELINE_ID}/coverage"
+    mkdir -p "$CI_PROJECT_DIR/results/${CI_PIPELINE_ID}/coverage"
+    mv coverage_report "$CI_PROJECT_DIR/results/${CI_PIPELINE_ID}/coverage"
+
