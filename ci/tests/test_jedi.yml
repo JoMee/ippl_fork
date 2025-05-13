@@ -30,6 +30,9 @@ test_jedi:
     - make -j 20
     - |
       export UCX_TLS=tcp,self
+      export OMPI_MCA_pml=ob1
+      export OMPI_MCA_btl=tcp,self
+      export OMPI_MCA_btl_tcp_if_include=lo
       ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - cd ..
     - mv build/tests/test_results.xml "${RESULTS_DIR}/gcc-xml" 
