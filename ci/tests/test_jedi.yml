@@ -1,4 +1,4 @@
-dummy_cluster:
+test_jedi:
   extends: .test_template
   tags:
     - jedi 
@@ -28,6 +28,6 @@ dummy_cluster:
       -DIPPL_PLATFORMS=cuda
 
     - make -j 20
-    - cd ..
     - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - cd ..
     - mv build/tests/test_results.xml "${RESULTS_DIR}/gcc-xml" 
