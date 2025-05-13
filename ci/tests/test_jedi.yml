@@ -28,6 +28,6 @@ test_jedi:
       -DIPPL_PLATFORMS=cuda
 
     - make -j 20
-    - ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - cd ..
     - mv build/tests/test_results.xml "${RESULTS_DIR}/gcc-xml" 
