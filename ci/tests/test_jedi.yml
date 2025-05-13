@@ -28,6 +28,8 @@ test_jedi:
       -DIPPL_PLATFORMS=cuda
 
     - make -j 20
-    - ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
+    - |
+      export UCX_TLS=tcp,self
+      ctest -j 16 --output-on-failure --output-junit tests/test_results.xml
     - cd ..
     - mv build/tests/test_results.xml "${RESULTS_DIR}/gcc-xml" 
