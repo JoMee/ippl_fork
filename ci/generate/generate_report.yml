@@ -9,6 +9,6 @@ debug_results:
     - python3 -m ci.test_results_processor.cli generate-allure results/"${CI_PIPELINE_ID}" allure-results
     - allure generate --clean
     - ls allure-report
-
+    - ls results/"${CI_PIPELINE_ID}/jobs"
     - echo "Checking per-job result directories..."
   allow_failure: true  
