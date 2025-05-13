@@ -6,5 +6,9 @@ debug_results:
   script:
     - echo "Debugging results directory..."
     - ls -la $CI_PROJECT_DIR/results/
+    - python3 -m ci.test_results_processor.cli generate-allure results/${CI_PIPELINE_ID} allure-results
+    - allure generate --clean
+    - ls allure-report
+
     - echo "Checking per-job result directories..."
   allow_failure: true  
