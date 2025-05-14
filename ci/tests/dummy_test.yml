@@ -5,4 +5,6 @@ dummy_test:
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   script:
     - echo "Executing dummy test..."
+    - rm -r "${CI_PROJECT_DIR}/results"
+    - mkdir results
     - mv /results "${CI_PROJECT_DIR}/results"
