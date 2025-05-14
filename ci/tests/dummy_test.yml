@@ -5,4 +5,4 @@ dummy_test:
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   script:
     - echo "Executing dummy test..."
-    - mv /results "${CI_PROJECT_DIR}"
+    - mv /results "${CI_PROJECT_DIR}/results"
