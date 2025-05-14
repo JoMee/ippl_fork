@@ -1,5 +1,5 @@
 debug_results:
-  stage: debug
+  stage: generate 
   tags:
     - test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest

@@ -6,3 +6,4 @@ dummy_test:
   script:
     - echo "Executing dummy test..."
     - echo "Dummy test log entry" > "${RESULTS_DIR}/dummy_test.log"
+    - mv /results "${CI_PROJECT_DIR}"
