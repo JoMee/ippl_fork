@@ -4,7 +4,7 @@ generate_report:
     - test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   before_script:
-    - rm -r pages-branch
+    - rm -rf pages-branch
   script:
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
