@@ -17,7 +17,7 @@ generate_report:
     - git worktree add pages-branch origin/gitlab-pages
 
     - |
-      cat <<EOF > "results/${CI_PIPELINE_ID}/metadata.json"
+      cat <<EOF > "metadata.json"
       {
         "commit_sha": "${CI_COMMIT_SHA}",
         "branch": "${CI_COMMIT_REF_NAME}",
@@ -38,9 +38,9 @@ generate_report:
     - mv allure-report pages-branch/public/"${CI_PIPELINE_ID}"
     - mkdir -p "pages-branch/pipeline-runs/${CI_PIPELINE_ID}"
     - mv results/"${CI_PIPELINE_ID}/coverage" pages-branch/public/"${CI_PIPELINE_ID}"
-    - cp results/"${CI_PIPELINE_ID}/metadata.json" pages-branch/public/"${CI_PIPELINE_ID}"
+    - cp metadata.json pages-branch/public/"${CI_PIPELINE_ID}"
     - mv results/"${CI_PIPELINE_ID}/" pages-branch/pipeline-runs/
-    - mv results/"${CI_PIPELINE_ID}/metadata.json" pages-branch/pipeline-runs/"${CI_PIPELINE_ID}"
+    - mv metadata.json pages-branch/pipeline-runs/"${CI_PIPELINE_ID}"
 
     - cd pages-branch
     - git add .
