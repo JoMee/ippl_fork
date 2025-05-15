@@ -9,7 +9,7 @@ generate_report:
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
 
-    - git fetch origin/gitlab-pages
+    - git fetch origin gitlab-pages
     - git worktree prune
     - git worktree add pages-branch origin/gitlab-pages
 
