@@ -2,8 +2,8 @@
 # Comment out tests you don't want to run
 
 include:
-  - local: 'ci/tests/serial_unit.yml'
-#  - local: 'ci/tests/dummy_test.yml'
+#  - local: 'ci/tests/serial_unit.yml'
+  - local: 'ci/tests/dummy_test.yml'
 #  - local: 'ci/tests/test_jedi.yml'
   - local: 'ci/generate/generate_report.yml'
 
