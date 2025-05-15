@@ -25,6 +25,7 @@ generate_report:
     
     - mkdir -p pages-branch/public/"${CI_PIPELINE_ID}/allure-report"
     - mv allure-report pages-branch/public/"${CI_PIPELINE_ID}"
+    - mv results/"${CI_PIPELINE_ID}/coverage" pages-branch/public/"${CI_PIPELINE_ID}"
 
     - mkdir -p "pages-branch/pipeline-runs/${CI_PIPELINE_ID}"
     - mv results/"${CI_PIPELINE_ID}/" pages-branch/pipeline-runs/
