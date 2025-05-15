@@ -1,14 +1,20 @@
-debug_results:
+generate_report:
   stage: generate 
   tags:
     - test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   script:
-    - echo "Debugging results directory..."
+    - git config --global user.email "gitlab-ci@localhost"
+    - git config --global user.name "GitLab CI"
+
+    - git fetch origin gitlab-pages
+    - git worktree add pages-branch origin/gitlab-pages
+
+
     - ls -la $CI_PROJECT_DIR/results/
     - python3 -m ci.test_results_processor.cli generate-allure results/"${CI_PIPELINE_ID}" allure-results
     - allure generate --clean
     - ls allure-report
     - ls results/"${CI_PIPELINE_ID}/jobs"
-    - echo "Checking per-job result directories..."
+
   allow_failure: true  
