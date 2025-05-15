@@ -43,6 +43,7 @@ generate_report:
     - mv metadata.json pages-branch/pipeline-runs/"${CI_PIPELINE_ID}"
 
     - cd pages-branch
+    - python3 generate_report.py
     - git add .
     - git commit -m "Report for commit ${CI_COMMIT_SHORT_SHA} from ${CI_COMMIT_REF_NAME}"
     - git push origin HEAD:gitlab-pages
