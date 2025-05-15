@@ -24,7 +24,7 @@ generate_report:
         "pipeline_id": "${CI_PIPELINE_ID}",
         "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
         "gitlab_url": "${CI_PROJECT_URL}/-/commit/${CI_COMMIT_SHA}",
-        "generated_by": "GitLab CI",
+        "generated_by": "GitLab CI"
       }
       EOF
 
