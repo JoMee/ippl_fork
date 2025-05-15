@@ -14,7 +14,7 @@ pages:
     - git worktree prune
     - git worktree add pages-branch origin/gitlab-pages
     - mkdir -p public
-    - mv pages-branch ./public
+    - mv pages-branch/public ./public
 
 
   artifacts:
