@@ -3,6 +3,8 @@ generate_report:
   tags:
     - test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
+  before_script:
+    - rm -r pages-branch
   script:
     - git config --global user.email "gitlab-ci@localhost"
     - git config --global user.name "GitLab CI"
@@ -27,6 +29,8 @@ generate_report:
     - git add .
     - git commit -m "Report for commit ${CI_COMMIT_SHORT_SHA} from ${CI_COMMIT_REF_NAME}"
     - git push origin HEAD:gitlab-pages
+    - cd ..
+    - rm -r pages-branch
 
 
 
