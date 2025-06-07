@@ -50,7 +50,4 @@ generate_report:
     - git push origin HEAD:gitlab-pages
     - cd ..
     - rm -r pages-branch
-
-
-
   allow_failure: true  
