@@ -1,5 +1,5 @@
 #include <concepts>
-#include <kokkos/Kokkos_Core.hpp>
+#include <Kokkos_Core.hpp>
 
 namespace fem {
 
@@ -11,11 +11,7 @@ concept LocalIndexSpace = requires(const T& space,
     typename T::local_id_type;
     typename T::global_id_type;
 
-    // The return type for lookups that might fail.
-    // Using Kokkos::pair is idiomatic and performant.
-    using lookup_result = Kokkos::pair<bool, typename T::local_id_type>;
-
-    { KOKKOS_INLINE_FUNCTION space.local_to_global(lid) } noexcept
+    { space.local_to_global(lid) } noexcept
         -> std::same_as<typename T::global_id_type>;
 
     /**
@@ -24,8 +20,8 @@ concept LocalIndexSpace = requires(const T& space,
      * @return A Kokkos::pair where .first is true if lid corresponding to gid was found, 
      * and .second is the corresponding local_id. If .first is false, .second is undefined.
      */
-    { KOKKOS_INLINE_FUNCTION space.global_to_local(gid) }
-        -> std::same_as<lookup_result>;
+    { space.global_to_local(gid) }
+        -> std::same_as<Kokkos::pair<bool, typename T::local_id_type>>;
 
 };
 

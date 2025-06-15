@@ -9,5 +9,6 @@ install(FILES
     index_space.h
     structured/Blades.hpp
     structured/GrassmanIndex.hpp
+    structured/BladeDispatch.hpp
     DESTINATION include/Meshes_new
 )

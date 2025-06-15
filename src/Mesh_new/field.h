@@ -15,7 +15,7 @@ concept Field = requires(const T& field,
     { field.view() } -> std::same_as<Kokkos::View<typename T::value_type**, typename T::device_type>>;
 
     
-    { KOKKOS_INLINE_FUNCTION field(lid, component) } -> std::convertible_to<typename T::value_type>;
+    { field(lid, component) } -> std::convertible_to<typename T::value_type>;
 
     { field.get_index_space() } -> LocalIndexSpace;
 };

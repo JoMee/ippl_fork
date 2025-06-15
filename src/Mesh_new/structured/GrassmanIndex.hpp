@@ -2,6 +2,8 @@
 
 #include "Mesh_new/index_space.h"
 #include <Kokkos_Core.hpp>
+#include "Mesh_new/structured/Blades.hpp"
+#include "Mesh_new/structured/BladeDispatch.hpp"
 
 namespace fem {
 
