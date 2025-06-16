@@ -6,11 +6,9 @@ target_include_directories(ippl
 )
 
 install(FILES
-    BladeDispatch.hpp
-    Blades.hpp
-    GrassmanIndex.hpp
-    IndexView.hpp
-    StructuredMesh.hpp
-    StructuredConnectivity.hpp
+    index_space.h
+    structured/Blades.hpp
+    structured/GrassmanIndex.hpp
+    structured/BladeDispatch.hpp
     DESTINATION include/Meshes_new
 )

@@ -21,13 +21,6 @@ public:
     return idx[N];
   }
 
-  static index_type make_index(const coord_type& coords, int mask) {
-    index_type idx;
-    for (int i = 0; i < N; ++i) idx[i] = coords[i];
-    idx[N] = mask;
-    return idx;
-  }
-
   GrassmanIndex(const coord_type& global_shape,
                 const coord_type& offset,
                 const coord_type& local_extent)
@@ -35,6 +28,8 @@ public:
       vertex_offset(offset),
       vertex_extent(local_extent)
     {}
+
+    
 
 private:
   coord_type vertex_shape;

@@ -7,6 +7,7 @@ template<int... Dims>
 struct Blade {
     static constexpr int Dim = sizeof...(Dims);
     static constexpr uint32_t Mask = ((1u << Dims) | ... | 0u);
+    using DimsSequence = std::integer_sequence<int, Dims...>;
 };
 
 // =================== Blade TMP Utilities ====================

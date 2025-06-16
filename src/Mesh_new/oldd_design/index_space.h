@@ -20,7 +20,7 @@ concept LocalIndexSpace = requires(const T& space,
      * @return A Kokkos::pair where .first is true if lid corresponding to gid was found, 
      * and .second is the corresponding local_id. If .first is false, .second is undefined.
      */
-    { space.global_to_local(gid) }
+    { space.global_to_local(gid) } noexcept
         -> std::same_as<Kokkos::pair<bool, typename T::local_id_type>>;
 
 };
