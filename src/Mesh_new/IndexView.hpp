@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Kokkos_Core.hpp>
 
 template <int N>

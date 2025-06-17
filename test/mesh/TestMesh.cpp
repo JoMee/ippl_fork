@@ -7,6 +7,8 @@
 
 #include "Mesh_new/GrassmanIndex.hpp"
 #include "Mesh_new/StructuredMesh.hpp"
+#include "Mesh_new/SerialLayout.hpp"
+#include "Mesh_new/Fields.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -17,17 +19,18 @@ using namespace fem;
 
 
 void test() {
-  constexpr int N = 2;
+  constexpr int Dim = 3;
+  using T = double;
+  using MeshType = StructuredCartesianMesh<Dim>;
+  using LayoutType = Layout<MeshType>;
 
-  // Create GrassmanIndex for a 4x4 grid
-  StructuredMesh<N> mesh(
-      {4, 4},  // global_shape
-      {0, 0},  // offset
-      {4, 4}   // local_extent
-  );
+  auto mesh = std::make_shared<MeshType>(Kokkos::Array<int, Dim>{10, 10, 10});
+  auto layout = std::make_shared<LayoutType>(mesh, 1);
+  Form<2, T, LayoutType> E(layout);
 
-  std::cout << mesh.entity_count<Blade<>>() << std::endl;
-  std::cout << std::endl;
+  E.fillHalo();
+
+
 
 }
 

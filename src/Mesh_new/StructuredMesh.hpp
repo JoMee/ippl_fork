@@ -1,43 +1,27 @@
 #pragma once
 
 #include "Mesh_new/GrassmanIndex.hpp"
-#include "Mesh_new/StructuredConnectivity.hpp"
+#include "Mesh_new/Connectivity.hpp"
 
 namespace fem {
 
-template <int N>
-class StructuredMesh {
+template <int Dim>
+class StructuredCartesianMesh {
 public:
-  using coord_type = Kokkos::Array<int, N>;
+    explicit StructuredCartesianMesh(const Kokkos::Array<int, Dim>& extents)
+        : logical_extents_(extents) {}
 
-  StructuredMesh(const coord_type& global_shape,
-                 const coord_type& offset,
-                 const coord_type& local_extent)
-    : index(global_shape, offset, local_extent)
-  {}
+    auto get_extents() const { return logical_extents_; }
 
-  template <typename Blade>
-  auto get_index_space() const {
-    return index.template get_subspace<Blade>();
-  }
-
-  template <typename FromBlade, typename ToBlade>
-  auto get_incidence() const {
-    return connectivity.template get<FromBlade, ToBlade>();
-  }
-
-  template <typename Blade>
-  std::size_t entity_count() const {
-    auto view = get_index_space<Blade>();
-    std::size_t count = 1;
-    for (int i = 0; i < N; ++i)
-      count *= view.extent[i];
-    return count;
-  }
+    // This method now requires the caller (the Layout) to provide the indexer.
+    // This removes the runtime branch and makes the Mesh stateless.
+    template <typename FromBlade, typename ToBlade>
+    auto get_incidence(const GrassmanIndex<Dim>& indexer) const {
+        return Connectivity<FromBlade, ToBlade, Dim>::get_functor(indexer);
+    }
 
 private:
-  GrassmanIndex<N> index;
-  StructuredConnectivity<N> connectivity; 
+    Kokkos::Array<int, Dim> logical_extents_;
 };
 
 } // namespace fem

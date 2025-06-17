@@ -3,8 +3,8 @@
 #include <Kokkos_Core.hpp>
 #include <unordered_map>
 #include <tuple>
-#include "Mesh_new/Blades.hpp" // contains Blade<D...> and GenerateBlades<N>
-#include "Mesh_new/IndexView.hpp" // helper to wrap coordinate bounds per Blade
+#include "Mesh_new/Blades.hpp"
+#include "Mesh_new/IndexView.hpp"
 
 namespace fem {
 
@@ -13,53 +13,41 @@ class GrassmanIndex {
 public:
   using coord_type = Kokkos::Array<int, N>;
 
-  GrassmanIndex() = default;
+  explicit GrassmanIndex(const coord_type& logical_extent, int halo_width = 0)
+        : logical_vertex_extent_(logical_extent), halo_width_(halo_width)
+    {}
 
-  GrassmanIndex(const coord_type& global_shape,
-                const coord_type& offset,
-                const coord_type& local_extent)
-    : global_shape(global_shape),
-      vertex_offset(offset),
-      vertex_extent(local_extent)
-  {
-    // Build index ranges for all possible blades
-    build_all_index_spaces();
+
+  // --- API for the LOGICAL VIEW (used by Mesh/Connectivity) ---
+  template <typename Blade>
+  auto get_logical_extent() const -> coord_type {
+    coord_type extent;
+    for (int i = 0; i < N; ++i) {
+        extent[i] = logical_vertex_extent_[i] - ((Blade::Mask >> i) & 1);
+    }
+    return extent;
   }
 
+  // --- API for the STORAGE VIEW (used by Layout) ---
   template <typename Blade>
-  auto get_subspace() const -> IndexView<N> {
-    constexpr uint32_t mask = Blade::Mask;
-    auto it = index_spaces.find(mask);
-    if (it == index_spaces.end())
-      throw std::runtime_error("No index space for given Blade.");
-    return it->second;
+  auto get_allocated_extent() const -> coord_type {
+      auto extent = get_logical_extent<Blade>();
+      for (int i = 0; i < N; ++i) {
+          extent[i] += 2 * halo_width_;
+      }
+      return extent;
+  }
+
+
+  KOKKOS_INLINE_FUNCTION auto get_storage_offset() const -> coord_type {
+      coord_type offset;
+      for (int i = 0; i < N; ++i) offset[i] = halo_width_;
+      return offset;
   }
 
 private:
-  coord_type global_shape, vertex_offset, vertex_extent;
-
-  std::unordered_map<uint32_t, IndexView<N>> index_spaces;
-
-  void build_all_index_spaces() {
-    using AllBlades = typename Detail::GenerateBlades<N>::type;
-    [&]<typename... Blades>(std::tuple<Blades...>) {
-      (insert_subspace<Blades>(), ...);
-    }(AllBlades{});
-  }
-
-  template <typename Blade>
-  void insert_subspace() {
-    constexpr uint32_t mask = Blade::Mask;
-
-    // Offset logic: this is oversimplified for now
-    IndexView<N> view;
-    for (int i = 0; i < N; ++i) {
-      view.offset[i] = vertex_offset[i];
-      view.extent[i] = vertex_extent[i] - ((mask >> i) & 1); 
-    }
-    index_spaces[mask] = view;
-  }
-
+  coord_type logical_vertex_extent_;
+  int halo_width_;
 };
 
 } // namespace fem

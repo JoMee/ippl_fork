@@ -3,15 +3,18 @@
 #include <tuple>
 #include <cstdint>
 
-template<int... Dims>
-struct Blade {
-    static constexpr int Dim = sizeof...(Dims);
-    static constexpr uint32_t Mask = ((1u << Dims) | ... | 0u);
-    using DimsSequence = std::integer_sequence<int, Dims...>;
-};
+namespace fem {
 
 // =================== Blade TMP Utilities ====================
 namespace Detail {
+
+    template<int... Dims>
+    struct Blade {
+        static constexpr int Dim = sizeof...(Dims);
+        static constexpr uint32_t Mask = ((1u << Dims) | ... | 0u);
+        using DimsSequence = std::integer_sequence<int, Dims...>;
+    };
+
 
     template<typename A, typename B>
     struct Concat;
@@ -34,16 +37,45 @@ namespace Detail {
     };
 
     template<int N>
-    struct GenerateBlades {
-        using Prev = typename GenerateBlades<N - 1>::type;
+    struct GenerateAllBlades {
+        using Prev = typename GenerateAllBlades<N - 1>::type;
         using Added = typename AddDimToAll<N - 1, Prev>::type;
         using type = typename Concat<Prev, Added>::type;
     };
 
     template<>
-    struct GenerateBlades<0> {
+    struct GenerateAllBlades<0> {
         using type = std::tuple<Blade<>>;
     };
 
+    template<int k, typename TupleOfBlades, typename ResultTuple = std::tuple<>>
+    struct FilterBladesByGrade;
+
+    template<int k, typename... Result>
+    struct FilterBladesByGrade<k, std::tuple<>, std::tuple<Result...>> {
+        using type = std::tuple<Result...>;
+    };
+
+    template<int k, typename Head, typename... Tail, typename... Result>
+    struct FilterBladesByGrade<k, std::tuple<Head, Tail...>, std::tuple<Result...>> {
+        using next_tuple = std::conditional_t<
+            (Head::Dim == k),
+            std::tuple<Result..., Head>,
+            std::tuple<Result...>
+        >;
+        using type = typename FilterBladesByGrade<k, std::tuple<Tail...>, next_tuple>::type;
+    };
+
+
 } // namespace Detail
 
+template<int N, int k>
+struct BladesForGrade {
+    using AllBlades = typename Detail::GenerateAllBlades<N>::type;
+    using type = typename Detail::FilterBladesByGrade<k, AllBlades>::type;
+};
+
+template<int... Dims>
+using Blade = Detail::Blade<Dims...>;
+
+} // namespace fem 

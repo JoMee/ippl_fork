@@ -11,6 +11,9 @@ install(FILES
     GrassmanIndex.hpp
     IndexView.hpp
     StructuredMesh.hpp
-    StructuredConnectivity.hpp
+    Fields.hpp
+    Mesh.hpp
+    SerialLayout.hpp
+    Connectivity.hpp
     DESTINATION include/Meshes_new
 )
