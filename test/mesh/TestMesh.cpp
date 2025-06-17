@@ -24,13 +24,12 @@ void test() {
   using MeshType = StructuredCartesianMesh<Dim>;
   using LayoutType = Layout<MeshType>;
 
-  auto mesh = std::make_shared<MeshType>(Kokkos::Array<int, Dim>{10, 10, 10});
+  auto mesh = std::make_shared<MeshType>(Kokkos::Array<int, Dim>{10, 10, 10},
+                                         Kokkos::Array<double, Dim>{1.0,1.0,1.0});
   auto layout = std::make_shared<LayoutType>(mesh, 1);
   Form<2, T, LayoutType> E(layout);
 
   E.fillHalo();
-
-
 
 }
 

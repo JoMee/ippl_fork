@@ -1,25 +1,35 @@
 #pragma once
-
-#include "Mesh_new/GrassmanIndex.hpp"
-
+#include "GrassmanIndex.hpp"
 namespace fem {
 namespace Detail {
-    // A placeholder functor. In a real system, this would contain the
-    // arithmetic to resolve incidences using the provided indexer.
-    template<typename IndexerType>
-    struct DummyIncidenceFunctor {
-        IndexerType indexer;
-        KOKKOS_INLINE_FUNCTION void operator()() const {}
-    };
-} // namespace Detail
+    template<typename From, typename To, typename Indexer>
+    struct IncidenceProvider;
 
-// Compile-time connectivity provider
-template <typename FromBlade, typename ToBlade, int Dim>
+    // Specialization for finding the 2 Vertices of an x-aligned Edge in 2D
+    template<typename Indexer>
+    struct IncidenceProvider<Blade<0>, Blade<>, Indexer> {
+        // Returns the logical coordinates of the 2 vertices for a given edge's logical coordinate.
+        KOKKOS_INLINE_FUNCTION auto get(const Kokkos::Array<int, Indexer::coord_type::size()>& edge_coord) const
+            -> Kokkos::Array<Kokkos::Array<int, Indexer::coord_type::size()>, 2>
+        {
+            return {edge_coord, Kokkos::Array<int, 2>{edge_coord[0] + 1, edge_coord[1]}};
+        }
+    };
+    // Specialization for finding the 2 Vertices of a y-aligned Edge in 2D
+    template<typename Indexer>
+    struct IncidenceProvider<Blade<1>, Blade<>, Indexer> {
+        // Returns the logical coordinates of the 2 vertices for a given edge's logical coordinate.
+        KOKKOS_INLINE_FUNCTION auto get(const Kokkos::Array<int, Indexer::coord_type::size()>& edge_coord) const
+            -> Kokkos::Array<Kokkos::Array<int, Indexer::coord_type::size()>, 2>
+        {
+            return {edge_coord, Kokkos::Array<int, 2>{edge_coord[0], edge_coord[1] + 1}};
+        }
+    };
+}
+template <typename From, typename To, int Dim>
 struct Connectivity {
-    // Generic fallback
-    static auto get_functor(const GrassmanIndex<Dim>& indexer) {
-        return Detail::DummyIncidenceFunctor{indexer};
+    static auto get_provider(const GrassmanIndex<Dim>& /*indexer*/) {
+        return Detail::IncidenceProvider<From, To, GrassmanIndex<Dim>>{};
     }
 };
-
-} // namespace fem
+}
