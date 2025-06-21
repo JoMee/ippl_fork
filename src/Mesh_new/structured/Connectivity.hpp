@@ -1,13 +1,14 @@
 #pragma once
-#include "GrassmanIndex.hpp"
+#include "Mesh_new/structured/GrassmanIndex.hpp"
+
 namespace fem {
 namespace Detail {
 template<typename From, typename To, typename Indexer>
-struct IncidenceProvider;
+struct StructuredIncidenceProvider;
 
 // Specialization for finding the 2 Vertices of an x-aligned Edge in 2D
 template<typename Indexer>
-struct IncidenceProvider<Blade<0>, Blade<>, Indexer> {
+struct StructuredIncidenceProvider<Blade<0>, Blade<>, Indexer> {
   // Returns the logical coordinates of the 2 vertices for a given edge's logical coordinate.
   KOKKOS_INLINE_FUNCTION auto get(const Kokkos::Array<int, Indexer::coord_type::size()>& edge_coord) const
   -> Kokkos::Array<Kokkos::Array<int, Indexer::coord_type::size()>, 2>
@@ -17,7 +18,7 @@ struct IncidenceProvider<Blade<0>, Blade<>, Indexer> {
 };
 // Specialization for finding the 2 Vertices of a y-aligned Edge in 2D
 template<typename Indexer>
-struct IncidenceProvider<Blade<1>, Blade<>, Indexer> {
+struct StructuredIncidenceProvider<Blade<1>, Blade<>, Indexer> {
   // Returns the logical coordinates of the 2 vertices for a given edge's logical coordinate.
   KOKKOS_INLINE_FUNCTION auto get(const Kokkos::Array<int, Indexer::coord_type::size()>& edge_coord) const
   -> Kokkos::Array<Kokkos::Array<int, Indexer::coord_type::size()>, 2>
@@ -29,7 +30,7 @@ struct IncidenceProvider<Blade<1>, Blade<>, Indexer> {
 template <typename From, typename To, int Dim>
 struct Connectivity {
   static auto get_provider(const GrassmanIndex<Dim>& /*indexer*/) {
-    return Detail::IncidenceProvider<From, To, GrassmanIndex<Dim>>{};
+    return Detail::StructuredIncidenceProvider<From, To, GrassmanIndex<Dim>>{};
   }
 };
 }

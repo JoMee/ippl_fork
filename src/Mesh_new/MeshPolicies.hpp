@@ -1,10 +1,10 @@
 #pragma once
 
 // Include the existing components that this policy will use.
-#include "Mesh_new/StructuredMesh.hpp"
-#include "Mesh_new/GrassmanIndex.hpp"
-#include "Mesh_new/Connectivity.hpp"
-#include "Mesh_new/Geometry.hpp"
+#include "Mesh_new/structured/StructuredMesh.hpp"
+#include "Mesh_new/structured/GrassmanIndex.hpp"
+#include "Mesh_new/structured/Connectivity.hpp"
+#include "Mesh_new/structured/Geometry.hpp"
 #include "Mesh_new/Blades.hpp"
 #include "Mesh_new/LayoutStrategy.hpp"
 
@@ -40,10 +40,10 @@ struct StructuredCartesianPolicy {
     }
 
     template <typename From, typename To, typename Indexer>
-    using ConnectivityProvider = Detail::IncidenceProvider<From, To, Indexer>;
+    using ConnectivityProvider = Detail::StructuredIncidenceProvider<From, To, Indexer>;
 
     template <typename BladeType, int Dim>
-    using GeometryProvider = Detail::GeometryProvider<BladeType, Dim>;
+    using GeometryProvider = Detail::StructuredGeometryProvider<BladeType, Dim>;
 
 };
 

@@ -5,9 +5,8 @@
 #include <random>
 #include <typeinfo>
 
-#include "Mesh_new/GrassmanIndex.hpp"
-#include "Mesh_new/StructuredMesh.hpp"
-#include "Mesh_new/SerialLayout.hpp"
+#include "Mesh_new/structured/StructuredMesh.hpp"
+#include "Mesh_new/Layout.hpp"
 #include "Mesh_new/Fields.hpp"
 #include "Mesh_new/MeshPolicies.hpp"
 

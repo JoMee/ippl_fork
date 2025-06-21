@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <tuple>
 #include "Mesh_new/Blades.hpp"
-#include "Mesh_new/IndexView.hpp"
+#include "Mesh_new/structured/IndexView.hpp"
 
 namespace fem {
 

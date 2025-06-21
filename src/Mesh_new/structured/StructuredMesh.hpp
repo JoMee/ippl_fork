@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Mesh_new/GrassmanIndex.hpp"
-#include "Mesh_new/Connectivity.hpp"
-#include "Mesh_new/Geometry.hpp"
-
 namespace fem {
 
 template <int Dim>
