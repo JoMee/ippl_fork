@@ -15,14 +15,7 @@ public:
 
     auto get_extents() const { return logical_extents_; }
 
-    template <typename FromBlade, typename ToBlade>
-    auto get_incidence(const GrassmanIndex<Dim>& indexer) const {
-        return Connectivity<FromBlade, ToBlade, Dim>::get_provider(indexer);
-    }
-    template <typename BladeType>
-    auto get_geometry() const {
-        return Geometry<BladeType, Dim>::get_provider(grid_spacing_);
-    }
+    auto get_spacing() const {return grid_spacing_; }
 
 private:
     Kokkos::Array<int, Dim> logical_extents_;
