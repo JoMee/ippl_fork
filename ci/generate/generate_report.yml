@@ -3,7 +3,8 @@ generate_report:
     GITLAB_ACCESS_TOKEN: "${CI_GITLAB_ACCESS_TOKEN}"  # Read from CI/CD variables
   stage: generate 
   tags:
-    - test
+    - linux
+    - opensuse
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   before_script:
     - rm -rf pages-branch

@@ -2,7 +2,8 @@ pages:
   stage: deploy
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   tags:
-    - test
+    - linux
+    - opensuse
   before_script:
     - rm -rf public/
   script:
