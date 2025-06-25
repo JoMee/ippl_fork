@@ -5,10 +5,7 @@
 #include <random>
 #include <typeinfo>
 
-#include "Mesh_new/structured/StructuredMesh.hpp"
-#include "Mesh_new/Layout.hpp"
-#include "Mesh_new/Fields.hpp"
-#include "Mesh_new/MeshPolicies.hpp"
+#include "Mesh_new/FunctionSpace.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -17,29 +14,28 @@
 
 using namespace fem;
 
-
 void test() {
 
-    constexpr int Dim = 3;
+    constexpr int Dim = 2;
+    constexpr int k = 1; // 1-form
+    constexpr int r = 1; // Using linear polynomials
     using T = double;
-    const int halo_width = 1;
+    using MeshPolicy = fem::StructuredCartesianPolicy;
+    using Family = fem::Q_r_Family; // The correct family for structured grids
 
-    using MeshPolicy = StructuredCartesianPolicy;
+    Kokkos::Array<int, Dim> extents = {10, 20}; // A 10x20 grid
+    Kokkos::Array<double, Dim> spacing = {0.1, 0.1};
+    auto mesh = std::make_shared<fem::StructuredCartesianMesh<Dim>>(extents, spacing);
 
-    using LayoutType = Layout<Dim, MeshPolicy>;
+    using LayoutType = fem::Layout<Dim, MeshPolicy>;
+    auto layout = std::make_shared<LayoutType>(mesh, 1); // Use a halo of width 1
 
-    using MeshType = typename LayoutType::MeshType;
+    using FunctionSpaceType = fem::FunctionSpace<Family, k, r, T, LayoutType>;
+    FunctionSpaceType Vh_1(layout);
 
-    auto mesh = std::make_shared<MeshType>(
-        Kokkos::Array<int, Dim>{10, 10, 10},
-        Kokkos::Array<double, Dim>{1.0, 1.0, 1.0}
-    );
+    auto example_1_form = Vh_1.create_form();
 
-    auto layout = std::make_shared<LayoutType>(mesh, halo_width);
-
-    Form<2, T, LayoutType> E(layout);
-
-    E.fillHalo();
+    example_1_form.fillHalo();
 
 }
 

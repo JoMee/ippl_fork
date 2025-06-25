@@ -11,6 +11,9 @@ install(FILES
     MeshPolicies.hpp
     Layout.hpp
     LayoutStrategy.hpp
+    FunctionSpace.hpp
+    PolynomialSpace.hpp
+    structured/MeshPolicy.hpp
     structured/IndexView.hpp
     structured/Connectivity.hpp
     structured/GrassmanIndex.hpp

@@ -46,9 +46,9 @@ public:
         return ProviderType{};
     }
 
-    template <typename BladeType>
+    template <typename GroupTag>
     auto get_geometry() const {
-        return Policy::template create_geometry_provider<BladeType, Dim>(*mesh_);
+        return Policy::template create_geometry_provider<GroupTag, Dim>(*mesh_);
     }
 
     void fill_halo() const {

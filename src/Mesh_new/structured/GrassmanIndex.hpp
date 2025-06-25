@@ -38,6 +38,19 @@ public:
       return extent;
   }
 
+  /**
+   * @brief Gets the total number of allocated entities for a given group.
+   * This is the flat size needed for the Kokkos::View.
+   */
+  template <typename Blade>
+  size_t get_num_allocated_entities() const {
+      auto extents = get_allocated_extent<Blade>();
+      size_t count = 1;
+      for (int i = 0; i < N; ++i) {
+          count *= extents[i];
+      }
+      return count;
+  }
 
   KOKKOS_INLINE_FUNCTION auto get_storage_offset() const -> coord_type {
       coord_type offset;
