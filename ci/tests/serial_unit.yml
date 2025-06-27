@@ -23,7 +23,7 @@ serial-unit-tests-and-coverage:
       -DIPPL_ENABLE_COVERAGE=ON \
       -DKokkos_VERSION=4.5.00
 
-    ASAN_OPTIONS="detect_leaks=0" make -j 16
+    ASAN_OPTIONS="detect_leaks=0" make -j 2
 
 
     ASAN_OPTIONS="detect_leaks=0" ctest -L unit -j 16 --output-on-failure --output-junit tests/test_results.xml || EXIT_CODE=$?

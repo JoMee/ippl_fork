@@ -34,7 +34,7 @@ compile-gcc:
       -DIPPL_ENABLE_UNIT_TESTS=True \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       -DKokkos_VERSION=4.5.00 &&
-      ASAN_OPTIONS="detect_leaks=0" make -j 16
+      ASAN_OPTIONS="detect_leaks=0" make -j 2
     } > "${TEST_RESULTS_DIR}/stdout.log" 2> "${TEST_RESULTS_DIR}/stderr.log" || COMPILE_STATUS=$?
 
     cd ..
