@@ -1,7 +1,7 @@
-# This job tests the default GCC compilation.
+# This job tests the default clang compilation.
 # It is designed to always pass from a CI perspective, reporting
 # success or failure in the Allure report instead.
-compile-gcc:
+compile-clang:
   extends: .test_template 
   stage: test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
@@ -11,9 +11,9 @@ compile-gcc:
   allow_failure: true 
   script: |
     set -e
-    echo "Starting default GCC compilation test..."
+    echo "Starting default clang compilation test..."
     
-    TEST_NAME="Compile GCC - Debug Mode"
+    TEST_NAME="Compile CLANG - Debug Mode"
     RESULTS_SUBDIR="compile-test" 
     
     TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/"
@@ -27,6 +27,7 @@ compile-gcc:
       mkdir -p build && cd build &&
     cmake .. \
       -DCMAKE_BUILD_TYPE=Debug \
+      -DCMAKE_C_COMPILER=clang \
       -DCMAKE_CXX_STANDARD=20 \
       -DIPPL_ENABLE_TESTS=True \
       -DIPPL_ENABLE_SOLVERS=ON \
@@ -40,7 +41,7 @@ compile-gcc:
     cd ..
 
     STATUS="passed"
-    MESSAGE="Compilation with default GCC settings successful."
+    MESSAGE="Compilation with default CLANG settings successful."
 
     if [ "${COMPILE_STATUS}" -ne 0 ]; then
       STATUS="failed"
