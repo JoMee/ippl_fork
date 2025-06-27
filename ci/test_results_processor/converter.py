@@ -66,7 +66,7 @@ def parse_ctest_xml_file(xml_file: Path, test_run_id: str, job_name: str) -> Lis
             status=result_status,
             uuid=str(uuid4()),
             testRunId=test_run_id,  
-            historyId=generate_history_id(name),
+            historyId=generate_history_id(final_test_name),
             duration=int(time_sec * 1000),  # convert to milliseconds
             attachments=[],
             statusDetails=StatusDetails(
