@@ -46,7 +46,7 @@ public:
                 return std::make_tuple(
                     Detail::ComponentInitData<decltype(tags)>{
                         .num_entities = layout_->get_indexer().template get_num_allocated_entities<decltype(tags)>(),
-                        .num_coeffs = poly_space.get_num_coefficients(ElementShape::Quadrilateral) // Placeholder shape
+                        .num_coeffs = poly_space.get_num_coefficients(ElementShape::Line) // Placeholder shape
                     }...
                 );
             }, GroupTagTuple{});
