@@ -52,19 +52,21 @@ compile-gcc:
       echo "Compilation successful."
     fi
 
-    cat <<EOF > "${TEST_RESULTS_DIR}/result.json"
-{
-  "name": "${TEST_NAME}",
-  "status": "${STATUS}",
-  "statusDetails": {
-    "message": "${MESSAGE}"
-  },
-  "attachments": [
-    { "name": "stdout", "source": "stdout.log", "type": "text/plain" },
-    { "name": "stderr", "source": "stderr.log", "type": "text/plain" }
-  ]
-}
-EOF
+
+
+    RESULT_FILE="${TEST_RESULTS_DIR}/result.json"
+    echo "{" > "${RESULT_FILE}"
+    echo "  \"name\": \"${TEST_NAME}\"," >> "${RESULT_FILE}"
+    echo "  \"status\": \"${STATUS}\"," >> "${RESULT_FILE}"
+    echo "  \"statusDetails\": {" >> "${RESULT_FILE}"
+    echo "    \"message\": \"${MESSAGE}\"" >> "${RESULT_FILE}"
+    echo "  }," >> "${RESULT_FILE}"
+    echo "  \"attachments\": [" >> "${RESULT_FILE}"
+    echo "    { \"name\": \"stdout\", \"source\": \"stdout.log\", \"type\": \"text/plain\" }," >> "${RESULT_FILE}"
+    echo "    { \"name\": \"stderr\", \"source\": \"stderr.log\", \"type\": \"text/plain\" }" >> "${RESULT_FILE}"
+    echo "  ]" >> "${RESULT_FILE}"
+    echo "}" >> "${RESULT_FILE}"
+
 
     echo "Compilation test results have been saved to ${TEST_RESULTS_DIR}"
 
