@@ -6,6 +6,7 @@ include:
 #  - local: 'ci/tests/dummy_test.yml'
 #  - local: 'ci/tests/test_jedi.yml'
   - local: 'ci/generate/generate_report.yml'
+  - local: 'ci/tests/compile_gcc.yml'
 
 # Template for tests
 .test_template:

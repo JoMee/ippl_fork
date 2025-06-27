@@ -5,6 +5,7 @@ import re
 from xml.etree import ElementTree as ET
 from uuid import uuid4
 from .model import TestResult, Attachment, StatusDetails, Label
+import json
 
 
 def read_gcc_xml_folder(folder: Path, test_run_id: str) -> List[TestResult]:
