@@ -16,7 +16,7 @@ compile-gcc:
     TEST_NAME="Compile GCC"
     RESULTS_SUBDIR="compile-test" 
     
-    TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/${RESULTS_SUBDIR}"
+    TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/"
     mkdir -p "${TEST_RESULTS_DIR}"
     
     # --- Compilation Step ---
@@ -33,9 +33,8 @@ compile-gcc:
       -DIPPL_ENABLE_FFT=ON \
       -DIPPL_ENABLE_UNIT_TESTS=True \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-      -DIPPL_ENABLE_COVERAGE=ON \
       -DKokkos_VERSION=4.5.00 &&
-      make -j 4
+      ASAN_OPTIONS="detect_leaks=0" make -j 16
     } > "${TEST_RESULTS_DIR}/stdout.log" 2> "${TEST_RESULTS_DIR}/stderr.log" || COMPILE_STATUS=$?
 
     cd ..
