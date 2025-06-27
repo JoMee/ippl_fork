@@ -5,6 +5,7 @@ test_jedi:
     - compute 
   script:
     - echo "Executing dummy test..."
+    - mkdir -p ${RESULTS_DIR}
     - echo "Dummy test log entry" > "${RESULTS_DIR}/dummy_test.log"
     - ls -la
 
