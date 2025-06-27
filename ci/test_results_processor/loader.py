@@ -3,12 +3,14 @@ from typing import List
 from .model import TestResult, PipelineResult
 from .aggregator import aggregate_pipeline
 from .converter import read_gcc_xml_folder
+from .compile_reader import read_compile_test
 from .json_reader import read_json_folder
 import json
 
 FOLDER_READERS = {
     "gcc-xml": read_gcc_xml_folder,
     "json": read_json_folder,
+    "compile-test": read_compile_test
 }
 
 def load_all_jobs_as_pipeline(pipeline_folder: Path) -> PipelineResult:

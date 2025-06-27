@@ -16,7 +16,7 @@ compile-gcc:
     TEST_NAME="Compile GCC"
     RESULTS_SUBDIR="compile-test" 
     
-    TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/${TEST_NAME}"
+    TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/${RESULTS_SUBDIR}"
     mkdir -p "${TEST_RESULTS_DIR}"
     
     # --- Compilation Step ---
