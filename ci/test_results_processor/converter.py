@@ -46,7 +46,7 @@ def parse_ctest_xml_file(xml_file: Path, test_run_id: str, job_name: str) -> Lis
 
         system_out = testcase.findtext("system-out", default="")
 
-        feature, story = extract_feature_and_story(classname, name)
+        feature, story = extract_feature_and_story(classname, base_name)
 
         final_test_name = f"{job_name}: {base_name}" if job_name else base_name
 
