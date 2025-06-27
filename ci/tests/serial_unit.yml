@@ -76,6 +76,8 @@ serial-unit-tests-and-coverage:
     echo "Test results will be stored in: ${RESULTS_DIR}/gcc-xml"
     mv build/tests/* "${RESULTS_DIR}/gcc-xml"
 
+    echo '{"name": "Serial Unit"}' > "${RESULTS_DIR}/gcc-xml/context.json"
+
     mkdir -p "$CI_PROJECT_DIR/results/${CI_PIPELINE_ID}/coverage"
     mv coverage_report/* "$CI_PROJECT_DIR/results/${CI_PIPELINE_ID}/coverage"
 
