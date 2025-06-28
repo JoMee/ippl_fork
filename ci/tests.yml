@@ -8,7 +8,7 @@ include:
   - local: 'ci/generate/generate_report.yml'
   - local: 'ci/tests/compile_gcc_debug.yml'
   - local: 'ci/tests/compile_gcc_release.yml'
-  - local: 'ci/tests/compile_clang.yml'
+  - local: 'ci/tests/compile_clang_debug.yml'
 
 # Template for tests
 .test_template:
