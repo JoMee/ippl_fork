@@ -1,7 +1,7 @@
 # This job tests the default GCC compilation.
 # It is designed to always pass from a CI perspective, reporting
 # success or failure in the Allure report instead.
-compile-gcc-debug:
+compile-gcc-release:
   extends: .test_template 
   stage: test
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
