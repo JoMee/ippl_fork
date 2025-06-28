@@ -13,7 +13,7 @@ compile-clang:
     set -e
     echo "Starting default clang compilation test..."
     
-    TEST_NAME="Compile CLANG - Debug Mode"
+    TEST_NAME="Compile CLANG - Serial Debug Mode"
     RESULTS_SUBDIR="compile-test" 
     
     TEST_RESULTS_DIR="${RESULTS_DIR}/${RESULTS_SUBDIR}/"
