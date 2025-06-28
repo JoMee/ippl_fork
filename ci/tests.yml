@@ -9,6 +9,7 @@ include:
   - local: 'ci/tests/compile_gcc_debug.yml'
   - local: 'ci/tests/compile_gcc_release.yml'
   - local: 'ci/tests/compile_clang_debug.yml'
+  - local: 'ci/tests/compile_jureca_release.yml'
 
 # Template for tests
 .test_template:
