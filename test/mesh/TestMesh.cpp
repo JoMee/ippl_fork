@@ -16,27 +16,31 @@ using namespace fem;
 
 void test() {
 
-    constexpr int Dim = 2;
-    constexpr int k = 1; // 1-form
-    constexpr int r = 1; // Using linear polynomials
+  constexpr int Dim = 2;
+    constexpr int r = 2; 
     using T = double;
     using MeshPolicy = fem::StructuredCartesianPolicy;
-    using Family = fem::Q_r_Family; // The correct family for structured grids
+    using Family = fem::P_r_Lambda;
 
-    Kokkos::Array<int, Dim> extents = {10, 20}; // A 10x20 grid
+    std::cout << "--- Setting up Mesh and Layout ---\n";
+    Kokkos::Array<int, Dim> extents = {10, 20}; // A 10x20 vertex grid
     Kokkos::Array<double, Dim> spacing = {0.1, 0.1};
     auto mesh = std::make_shared<fem::StructuredCartesianMesh<Dim>>(extents, spacing);
 
     using LayoutType = fem::Layout<Dim, MeshPolicy>;
     auto layout = std::make_shared<LayoutType>(mesh, 1); // Use a halo of width 1
 
-    using FunctionSpaceType = fem::FunctionSpace<Family, k, r, T, LayoutType>;
-    FunctionSpaceType Vh_1(layout);
+    std::cout << "\n--- Setting up P2 FunctionSpace ---\n";
+    using P2_Lagrange_Space = fem::FunctionSpace<Family, r, T, LayoutType>;
+    P2_Lagrange_Space Vh_P2(layout);
 
-    auto example_1_form = Vh_1.create_form();
+    std::cout << "\n--- Creating a P2 Lagrange Field ---\n";
+    auto my_p2_field = Vh_P2.create_form();
+    std::cout << "Successfully created a P2 Lagrange field.\n";
 
-    example_1_form.fillHalo();
+    my_p2_field.fillHalo();
 
+  
 }
 
 int main(int argc, char* argv[]) {

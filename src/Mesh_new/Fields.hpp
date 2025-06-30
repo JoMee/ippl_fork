@@ -27,12 +27,16 @@ struct ComponentInitData {
 template <typename T, typename GroupTag, typename LayoutType>
 class ComponentField {
 public:
+
+  using ScalarType = T;
+  using GroupTagType = GroupTag;
+
   using view_type = Kokkos::View<T**>;
 
   explicit ComponentField(
     std::shared_ptr<const LayoutType> layout,
     size_t num_entities,
-    int num_coeffs)
+    size_t num_coeffs)
     : layout_(layout)
   {
       view_ = view_type("component_field", num_entities, num_coeffs);
@@ -47,8 +51,10 @@ public:
       return *this;
   }
 
-  // This method can now be specialized for different GroupTags in the future.
-  void fillHalo() { layout_->fill_halo(); }
+  void fillHalo() {
+      layout_->fillHalo();
+  }
+
   view_type& view() { return view_; }
   const view_type& view() const { return view_; }
 
@@ -60,52 +66,39 @@ private:
 } // namespace Detail
 
 
-// --- Public-Facing Abstraction: Form ---
-template <int k, typename T, typename LayoutType>
+template <typename... ComponentFieldTypes>
 class Form {
 private:
-    // Helper to create a tuple of ComponentFields from a tuple of Blades
-    template <typename> struct ComponentTupleFromGroups;
-    template <typename... GroupTags>
-    struct ComponentTupleFromGroups<std::tuple<GroupTags...>> {
-        using type = std::tuple<Detail::ComponentField<T, GroupTags, LayoutType>...>;
-    };
-
-    // The policy defines what the GroupTags are for a given mesh type.
-    using GroupTagTuple = typename LayoutType::Policy::template StorageModel<LayoutType::DIM, k>::GroupTagTuple;
-    using ComponentTuple = typename ComponentTupleFromGroups<GroupTagTuple>::type;
-
-    std::shared_ptr<const LayoutType> layout_;
+    using ComponentTuple = std::tuple<ComponentFieldTypes...>;
     ComponentTuple components_;
 
-    // The constructor is PRIVATE and takes the public DTO.
-    template <typename... GroupTags>
-    Form(std::shared_ptr<const LayoutType> layout,
-         const std::tuple<Detail::ComponentInitData<GroupTags>...>& all_init_data)
-        : layout_(layout),
-          components_(std::make_tuple(
-              Detail::ComponentField<T, GroupTags, LayoutType>(
-                  layout,
-                  std::get<Detail::ComponentInitData<GroupTags>>(all_init_data).num_entities,
-                  std::get<Detail::ComponentInitData<GroupTags>>(all_init_data).num_coeffs
-              )...
-          ))
-    {}
+    // The constructor is PRIVATE. Only a FunctionSpace can create a Form.
+    // It takes a pre-constructed tuple of components.
+    explicit Form(ComponentTuple&& components) : components_(std::move(components)) {}
 
-    // Declare all FunctionSpace instantiations as friends so they can call the private constructor.
-    template <typename Family, int k_friend, int r, typename T_friend, typename LayoutType_friend>
+    template <typename Family, int r, typename T, typename LayoutType>
     friend class FunctionSpace;
 
 public:
-    // The public interface for Form remains simple.
+
     void fillHalo() {
-        std::cout << "Form<" << k << ">: Orchestrating halo exchange..." << std::endl;
-        std::apply([](auto&... component) { (component.fillHalo(), ...); }, components_);
+        std::cout << "Form: Orchestrating halo exchange for all components..." << std::endl;
+        std::apply(
+            [](auto&... component) {
+                (component.fillHalo(), ...);
+            },
+            components_
+        );
     }
 
-    template <typename GroupTag>
+    template <typename ComponentFieldType>
     const auto& get_component() const {
-        return std::get<Detail::ComponentField<T, GroupTag, LayoutType>>(components_);
+        return std::get<ComponentFieldType>(components_);
+    }
+
+    template <typename ComponentFieldType>
+    auto& get_component() {
+        return std::get<ComponentFieldType>(components_);
     }
 };
 

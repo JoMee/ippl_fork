@@ -51,8 +51,8 @@ public:
         return Policy::template create_geometry_provider<GroupTag, Dim>(*mesh_);
     }
 
-    void fill_halo() const {
-        Policy::LayoutStrategy::fill_halo(*this);
+    void fillHalo() const {
+        Policy::LayoutStrategy::fillHalo(*this);
     }
 
     const auto& get_mesh() const { return *mesh_; }

@@ -11,8 +11,7 @@ install(FILES
     MeshPolicies.hpp
     Layout.hpp
     LayoutStrategy.hpp
-    FunctionSpace.hpp
-    PolynomialSpace.hpp
+    SpaceTraits.hpp
     structured/MeshPolicy.hpp
     structured/IndexView.hpp
     structured/Connectivity.hpp
