@@ -3,7 +3,7 @@
 
 include:
 #  - local: 'ci/tests/serial_unit.yml'
-#  - local: 'ci/generate/generate_report.yml'
+  - local: 'ci/generate/generate_report.yml'
 #  - local: 'ci/tests/compile_gcc_debug.yml'
 #  - local: 'ci/tests/compile_gcc_release.yml'
 #  - local: 'ci/tests/compile_clang_debug.yml'
