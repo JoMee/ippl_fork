@@ -4,6 +4,8 @@
 compile-clang:
   extends: .test_template 
   stage: test
+  rules:
+    - if: '$RUN_COMPILE_CLANG_DEBUG == "true" || $RUN_ALL_TESTS == "true"'
   image: registry.jsc.fz-juelich.de/muralikrishnan1/ippl:latest
   tags:
     - linux
