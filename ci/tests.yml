@@ -20,11 +20,11 @@ variables:
     options: ["true", "false"]
     description: "Run the GCC release compilation test."
   RUN_COMPILE_CLANG_DEBUG:
-    value: "false"
+    value: "true"
     options: ["true", "false"]
     description: "Run the Clang debug compilation test."
   RUN_COMPILE_JURECA:
-    value: "true"
+    value: "false"
     options: ["true", "false"]
     description: "Run the compilation test for the Jureca supercomputer."
 
